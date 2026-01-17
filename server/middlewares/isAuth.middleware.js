@@ -14,7 +14,19 @@ export const isAuth = async (req, res, next) => {
 
     const decodedData = jwt.verify(token, process.env.SECRET_KEY);
 
-    req.user = await User.findById(decodedData.userId);
+    const user = await User.findById(decodedData.userId).select("-password");
+
+     if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+      req.user = user;
+      console.log(user.role);
+      
+
 
     next();
   } catch (error) {
