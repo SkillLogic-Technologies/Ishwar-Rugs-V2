@@ -14,17 +14,17 @@ import "swiper/css/pagination";
 import "@/components/styles/carousel.css"; // Make sure the file path is correct
 
 const images = [
-  "https://res.cloudinary.com/dzufohihn/image/upload/v1767613783/ChatGPT_Image_Jun_20__2025__10_42_35_PM_estgvi.png",
-  "https://res.cloudinary.com/dzufohihn/image/upload/v1767613841/ChatGPT_Image_Jun_20__2025__10_45_37_PM_jeikmi.png",
-  "https://res.cloudinary.com/dzufohihn/image/upload/v1767613918/ChatGPT_Image_Jun_20__2025__10_46_55_PM_cxiell.png",
-  "https://res.cloudinary.com/dzufohihn/image/upload/v1767613933/ChatGPT_Image_Jun_20__2025__11_03_56_PM_zqd9ne.png",
-  "https://res.cloudinary.com/dzufohihn/image/upload/v1767613942/ChatGPT_Image_Jun_20__2025__11_07_33_PM_idxtdq.png",
-  "https://res.cloudinary.com/dzufohihn/image/upload/v1767614015/ChatGPT_Image_Jun_30__2025__10_22_23_PM_pal14d.png",
-  "https://res.cloudinary.com/dzufohihn/image/upload/v1767614034/ChatGPT_Image_Jun_30__2025__10_35_12_PM_nt9d5n.png",
-  "https://res.cloudinary.com/dzufohihn/image/upload/v1767614046/ChatGPT_Image_Jun_30__2025__11_23_06_PM_xlklbi.png",
-  "https://res.cloudinary.com/dzufohihn/image/upload/v1767614479/ChatGPT_Image_Jun_30__2025__11_22_16_PM_lajtcu.png",
-  "https://res.cloudinary.com/dzufohihn/image/upload/v1767614536/ChatGPT_Image_Jun_30__2025__10_43_47_PM_i5trsv.png",
-  "https://res.cloudinary.com/dzufohihn/image/upload/v1767614550/ChatGPT_Image_Jun_30__2025__11_01_28_PM_ps6jgs.png",
+      "/carousel-3d/slide-01.png",
+      "/carousel-3d/slide-02.png",
+      "/carousel-3d/slide-03.png",
+      "/carousel-3d/slide-04.png",
+      "/carousel-3d/slide-05.png",
+      "/carousel-3d/slide-06.png",
+      "/carousel-3d/slide-07.png",
+      "/carousel-3d/slide-08.png",
+      "/carousel-3d/slide-09.png",
+      "/carousel-3d/slide-10.png",
+      "/carousel-3d/slide-11.png",
 ];
 
 export default function Carousel360() {
@@ -65,6 +65,9 @@ export default function Carousel360() {
               <img
                 src={src}
                 alt={`Portrait ${i + 1}`}
+                loading={i < 3 ? "eager" : "lazy"}   // first 2–3 fast load
+                decoding="async"                     // browser ko async decode bolta hai
+                // fetchpriority={i === 0 ? "high" : "auto"}
                 className="w-full h-full object-cover"
               />
             </SwiperSlide>

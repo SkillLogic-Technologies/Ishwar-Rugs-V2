@@ -2,13 +2,12 @@ import { useQuery } from "@tanstack/react-query";
 import { Play } from "lucide-react";
 import { Link } from "wouter";
 import { api } from "@/lib/api";
-import { useState } from "react";
+import HeroCarousel from "@/components/hero-carousel";
+import { useState } from "react"; // ✅ Add this
 import CollectionGrid from "@/components/collection-grid";
 import { Button } from "@/components/ui/button";
+import Carousel3D from "@/components/Carousel3D";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import HeroCarousel from "@/components/hero-carousel"
-import Carousel3D from "@/components/Carousel3D"
-
 
 export default function Home() {
   // ✅ This MUST be declared before any JSX using isPlaying
@@ -40,9 +39,8 @@ export default function Home() {
 
   return (
     <div className="min-h-screen">
-
-        <HeroCarousel />
-
+      {/* Hero Carousel */}
+      <HeroCarousel />
 
       {/* Brand Introduction */}
       <section className="py-32 px-4 bg-gradient-to-b from-background via-luxury-brown to-background">
@@ -61,9 +59,12 @@ export default function Home() {
         <div className="w-full mt-20">
           <div className="w-full h-[48rem] overflow-hidden rounded-3xl">
             <img
-              src="https://res.cloudinary.com/dzufohihn/image/upload/v1767609165/ChatGPT_Image_Jun_20__2025__11_18_41_PM_jtcjfu.png"
+              // src="https://i.postimg.cc/Pf7bj1wZ/ChatGPT_Image_Jun_20,_2025,_11_18_41_PM.png"
+              src="/Carpet.png"
               alt="Intro placeholder"
               className="w-full h-full object-cover transition-transform duration-700 hover:scale-105 rounded-3xl"
+              loading="eager"
+              decoding="async"
             />
           </div>
         </div>
@@ -97,10 +98,10 @@ export default function Home() {
               </div>
               <div className="order-1 lg:order-2 grid grid-cols-2 gap-8">
                 {[
-                  "https://res.cloudinary.com/dzufohihn/image/upload/v1767609253/Chat-GPT-Image-Jun-30-2025-10-10-58-PM_gjkyze.png",
-                  "https://res.cloudinary.com/dzufohihn/image/upload/v1767609300/Chat-GPT-Image-Jun-30-2025-10-22-23-PM_qggba0.png",
-                  "https://res.cloudinary.com/dzufohihn/image/upload/v1767609351/Chat-GPT-Image-Jun-30-2025-10-28-44-PM_agk2tu.png",
-                  "https://res.cloudinary.com/dzufohihn/image/upload/v1767609405/Chat-GPT-Image-Jun-30-2025-10-35-12-PM_mki29b.png",
+                  "/explore-our-rugs/contemporary/contemporary-01.png",
+                  "/explore-our-rugs/contemporary/contemporary-02.png",
+                  "/explore-our-rugs/contemporary/contemporary-03.png",
+                  "/explore-our-rugs/contemporary/contemporary-04.png",
                 ].map((src, i) => (
                   <Link
                     key={i}
@@ -111,6 +112,8 @@ export default function Home() {
                       src={src}
                       alt="Contemporary Rug"
                       className="w-full h-96 md:h-[28rem] lg:h-[32rem] object-cover transition-transform duration-700 group-hover:scale-110"
+                      loading="lazy"
+                      decoding="async"
                     />
                   </Link>
                 ))}
@@ -121,10 +124,10 @@ export default function Home() {
             <div className="grid lg:grid-cols-2 gap-16 items-center">
               <div className="grid grid-cols-2 gap-8">
                 {[
-                  "https://res.cloudinary.com/dzufohihn/image/upload/v1767609460/Chat-GPT-Image-Jun-30-2025-10-43-47-PM_lqypvf.png",
-                  "https://res.cloudinary.com/dzufohihn/image/upload/v1767609498/Chat-GPT-Image-Jun-30-2025-11-01-28-PM_f0ennn.png",
-                  "https://res.cloudinary.com/dzufohihn/image/upload/v1767609543/Chat-GPT-Image-Jun-30-2025-11-06-16-PM_cbqt7a.png",
-                  "https://res.cloudinary.com/dzufohihn/image/upload/v1767609562/Chat-GPT-Image-Jun-30-2025-11-10-05-PM_fyr3ds.png",
+                  "/explore-our-rugs/modern/modern-01.png",
+                  "/explore-our-rugs/modern/modern-02.png",
+                  "/explore-our-rugs/modern/modern-03.png",
+                  "/explore-our-rugs/modern/modern-04.png",
                 ].map((src, i) => (
                   <Link
                     key={i}
@@ -135,6 +138,8 @@ export default function Home() {
                       src={src}
                       alt="Modern Rug"
                       className="w-full h-96 md:h-[28rem] lg:h-[32rem] object-cover transition-transform duration-700 group-hover:scale-110"
+                      loading="lazy"
+                      decoding="async"
                     />
                   </Link>
                 ))}
@@ -179,11 +184,10 @@ export default function Home() {
               </div>
               <div className="order-1 lg:order-2 grid grid-cols-2 gap-8">
                 {[
-
-                  "https://res.cloudinary.com/dzufohihn/image/upload/v1767609704/Chat-GPT-Image-Jun-30-2025-11-14-07-PM_u1xfxt.png",
-                  "https://res.cloudinary.com/dzufohihn/image/upload/v1767609767/Chat-GPT-Image-Jun-30-2025-11-19-00-PM_sopzx7.png",
-                  "https://res.cloudinary.com/dzufohihn/image/upload/v1767609803/Chat-GPT-Image-Jun-30-2025-11-22-16-PM_uwvmz3.png",
-                  "https://res.cloudinary.com/dzufohihn/image/upload/v1767609860/Chat-GPT-Image-Jun-30-2025-11-23-06-PM_tj3ldj.png",
+                  "/explore-our-rugs/traditional/traditional-01.png",
+                  "/explore-our-rugs/traditional/traditional-02.png",
+                  "/explore-our-rugs/traditional/traditional-03.png",
+                  "/explore-our-rugs/traditional/traditional-04.png",
                 ].map((src, i) => (
                   <Link
                     key={i}
@@ -194,6 +198,8 @@ export default function Home() {
                       src={src}
                       alt="Traditional Rug"
                       className="w-full h-96 md:h-[28rem] lg:h-[32rem] object-cover transition-transform duration-700 group-hover:scale-110"
+                      loading="lazy"
+                      decoding="async"
                     />
                   </Link>
                 ))}
@@ -220,20 +226,20 @@ export default function Home() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 max-w-screen-2xl mx-auto">
             {[
               {
-                main: "https://res.cloudinary.com/dzufohihn/image/upload/v1767610058/Chat-GPT-Image-Jun-30-2025-11-33-23-PM_oorotn.png",
-                hover: "https://res.cloudinary.com/dzufohihn/image/upload/v1767610463/image_cylait.png",
-              },
-              {
-                main: "https://res.cloudinary.com/dzufohihn/image/upload/v1767610476/Serene-Sketching-in-Soft-Light_kcf9uj.png",
-                hover: "https://res.cloudinary.com/dzufohihn/image/upload/v1767610570/image_pxxsnr.png",
-              },
-              {
-                main: "https://res.cloudinary.com/dzufohihn/image/upload/v1767610621/Chat-GPT-Image-Jun-30-2025-11-58-54-PM_gokvk1.png",
-                hover: "https://res.cloudinary.com/dzufohihn/image/upload/v1767610633/image_k7m2fk.png",
-              },
-              {
-                main: "https://res.cloudinary.com/dzufohihn/image/upload/v1767610731/Chat-GPT-Image-Jun-30-2025-11-49-43-PM_i9dkto.png",
-                hover: "https://res.cloudinary.com/dzufohihn/image/upload/v1767610719/image_eqwabo.png",
+                  main: "/featured-collections/featured-01-main.png",
+                  hover: "/featured-collections/featured-01-hover.png",
+                },
+                {
+                  main: "/featured-collections/featured-02-main.png",
+                  hover: "/featured-collections/featured-02-hover.png",
+                },
+                {
+                  main: "/featured-collections/featured-03-main.png",
+                  hover: "/featured-collections/featured-03-hover.png",
+                },
+                {
+                  main: "/featured-collections/featured-04-main.png",
+                  hover: "/featured-collections/featured-04-hover.png",
               },
             ].map((img, i) => (
               <Link
@@ -245,11 +251,15 @@ export default function Home() {
                   src={img.main}
                   alt={`Featured ${i + 1}`}
                   className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 group-hover:opacity-0"
+                  loading="lazy"
+                  decoding="async"
                 />
                 <img
                   src={img.hover}
                   alt={`Featured Hover ${i + 1}`}
                   className="absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+                  loading="lazy"
+                  decoding="async"
                 />
               </Link>
             ))}
@@ -288,6 +298,8 @@ export default function Home() {
                   src="https://img.youtube.com/vi/lKfV5nuxSDY/maxresdefault.jpg"
                   alt="Carpet weaving process showing artisan craftsmanship"
                   className="w-full h-[32rem] md:h-[40rem] object-cover"
+                   loading="eager"
+                  decoding="async"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent flex items-center justify-center">
                   <Button
@@ -312,9 +324,7 @@ export default function Home() {
       </section>
 
       {/* ✅ Crafted Portraits Carousel Section */}
-
-        <Carousel3D />
-
+      <Carousel3D />
 
       <section className="py-32 bg-background">
         <div className="max-w-screen-2xl mx-auto px-6">
@@ -330,25 +340,25 @@ export default function Home() {
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10">
             {[
               {
-                title: "Conceptualization",
-                desc: "Our in-house studio helps shape original bespoke ideas.",
-                img: "https://res.cloudinary.com/dzufohihn/image/upload/v1767610801/Chat-GPT-Image-Jul-1-2025-12-10-41-AM_mgftv7.png",
-              },
-              {
-                title: "Development",
-                desc: "Careful planning and selection of finest materials.",
-                img: "https://res.cloudinary.com/dzufohihn/image/upload/v1767610812/Chat-GPT-Image-Jul-1-2025-12-23-55-AM_tjztzv.png",
-              },
-              {
-                title: "Creation",
-                desc: "Craftsmanship in knotted, tufted, and woven forms.",
-                img: "https://res.cloudinary.com/dzufohihn/image/upload/v1767610863/Chat-GPT-Image-Jul-1-2025-12-28-28-AM_hfxq9r.png",
-              },
-              {
-                title: "Installation",
-                desc: "Professional fitting for the perfect finish.",
-                img: "https://res.cloudinary.com/dzufohihn/image/upload/v1767610872/Chat-GPT-Image-Jul-1-2025-12-27-01-AM_pqszxu.png",
-              },
+                    title: "Conceptualization",
+                    desc: "Our in-house studio helps shape original bespoke ideas.",
+                    img: "/design-your-rug/step-01-concept.png",
+                  },
+                  {
+                    title: "Development",
+                    desc: "Careful planning and selection of finest materials.",
+                    img: "/design-your-rug/step-02-development.png",
+                  },
+                  {
+                    title: "Creation",
+                    desc: "Craftsmanship in knotted, tufted, and woven forms.",
+                    img: "/design-your-rug/step-03-creation.png",
+                  },
+                  {
+                    title: "Installation",
+                    desc: "Professional fitting for the perfect finish.",
+                    img: "/design-your-rug/step-04-installation.png",
+                  },
             ].map((item) => (
               <div key={item.title} className="text-center group">
                 <div className="relative mb-6 overflow-hidden rounded-3xl aspect-[3/4] shadow-lg">
@@ -356,6 +366,8 @@ export default function Home() {
                     src={item.img}
                     alt={`${item.title} image`}
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    loading="lazy"
+                    decoding="async"
                   />
                 </div>
                 <h3 className="font-serif text-2xl font-semibold text-foreground mb-4">
@@ -408,14 +420,18 @@ export default function Home() {
 
             <div className="relative group overflow-hidden w-full h-full">
               <img
-                src="https://res.cloudinary.com/dzufohihn/image/upload/v1767610935/ChatGPT_Image_Jun_20__2025__11_23_59_PM_hj4lnl.png"
+                src="/heritage/heritage-main.png"
                 alt="Heritage Default"
                 className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                loading="lazy"
+                decoding="async" 
               />
               <img
-                src="https://res.cloudinary.com/dzufohihn/image/upload/v1767611004/ChatGPT_Image_Jun_20__2025__11_23_59_PM_fgi7nv.png"
+                src="/heritage/heritage-hover.png"
                 alt="Heritage Hover"
                 className="absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-100 transition-opacity duration-700"
+                loading="lazy"
+                decoding="async"
               />
               <div className="absolute bottom-6 right-6 bg-premium-gold text-primary-brown px-6 py-4 rounded-xl shadow-xl">
                 <div className="text-center">
