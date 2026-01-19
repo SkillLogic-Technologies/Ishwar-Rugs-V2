@@ -1,4 +1,5 @@
 import Product from "../models/Product.js";
+import fs from "fs"
 
 // create product...
 async function createProduct(req, res) {
@@ -7,11 +8,19 @@ async function createProduct(req, res) {
         if (!title || !category || !mrp) {
             return res.status(400).json({success: false, message: "Title, Category & MRP are required"})
         }
-        else if(mrp <= 0){
+        if(mrp <= 0){
             return res.status(400).json({success: false, message: "MRP must be greater than 0"})
         }
 
-        const product = await Product.create(req.body)
+        const data = {...req.body}
+        if (req.files && req.files.thumbnail) {
+            data.thumbnail = req.files.thumbnail[0].path;
+        }
+        if (req.files && req.files.images.length > 0) {
+            data.images = req.files.images.map(file => file.path);
+        }
+
+        const product = await Product.create(data)
         res.status(201).json({ success: true, message: "Product created successfully", data: product });
     } catch (error) {
         res.status(400).json({ success: false, message: error.message });
@@ -21,7 +30,28 @@ async function createProduct(req, res) {
 // get products...
 async function getProducts(req, res) {
     try {
-        const products = await Product.find();
+        let filter = {};
+
+        if (req.query.title) {
+            filter.title = { $regex: req.query.title, $options: "i" };
+        }
+
+        if (req.query.category) {
+            filter.category = req.query.category;
+        }
+
+        if (req.query.minPrice && req.query.maxPrice) {
+            filter.price = {
+                $gte: Number(req.query.minPrice),
+                $lte: Number(req.query.maxPrice)
+            }
+        }
+        const page = Number(req.query.page) || 1;
+        const limit = Number(req.query.limit) || 20;
+        const skip = (page - 1) * limit;
+
+        const products = await Product.find(filter).skip(skip).limit(limit);
+
         res.status(200).json({success: true, data: products})
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
@@ -29,9 +59,9 @@ async function getProducts(req, res) {
 }
 
 // get product by id..
-async function getProductById(req, res){
+async function getProductBySlug(req, res){
     try {
-        const product = await Product.findById(req.params.id)
+        const product = await Product.findOne({slug: req.params.slug});
         if(!product){
             return res.status(404).json({ success: false, message: "Product not found" })
         }
@@ -45,13 +75,28 @@ async function getProductById(req, res){
 async function updateProduct(req, res) {
     try {
         const { id } = req.params
-        const data = req.body
-        const product = await Product.findByIdAndUpdate(id, data, { new:true })
-
+        const product = await Product.findById(id)
+        
         if(!product){
             return res.status(404).json({success: false, message: "Product not found" })
         }
-        res.status(200).json({ success: true, message: "Product updated successfully", data: product})
+
+        const updatedData = { ...req.body };
+        if (req.files && req.files.thumbnail) {
+            if (product.thumbnail && fs.existsSync(product.thumbnail)) {
+                fs.unlinkSync(product.thumbnail);
+            }
+            updatedData.thumbnail = req.files.thumbnail[0].path;
+        }
+
+        if (req.files && req.files.images?.length > 0) {
+            product.images?.forEach(img => fs.existsSync(img) && fs.unlinkSync(img));
+            updatedData.images = req.files.images.map(file => file.path);
+        }
+
+        const updatedProduct = await Product.findByIdAndUpdate( id, updatedData, { new: true });
+        
+        res.status(200).json({ success: true, message: "Product updated successfully", data: updatedProduct})
     } catch (error) {
         res.status(400).json({ success: false, message: error.message });
     }
@@ -60,10 +105,19 @@ async function updateProduct(req, res) {
 // delete product
 async function deleteProduct(req, res) {
     try {
-        const product = await Product.findByIdAndDelete(req.params.id)
+        const product = await Product.findById(req.params.id)
         if(!product){
             return res.status(404).json({ success: false, message:"Product doesn't exist"})
         }
+        else if (product.images) {
+            product.images.forEach(img => fs.existsSync(img) && fs.unlinkSync(img));
+        }
+        
+        if (product.thumbnail && fs.existsSync(product.thumbnail)) {
+            fs.unlinkSync(product.thumbnail);
+        }
+        await Product.findByIdAndDelete(req.params.id)
+
         res.status(200).json({ success: true, message:"Product deleted successfully"})
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
@@ -96,4 +150,4 @@ async function userReview(req, res){
     }
 }
 
-export { createProduct, getProducts, getProductById, updateProduct, deleteProduct, userReview }
+export { createProduct, getProducts, getProductBySlug, updateProduct, deleteProduct, userReview }

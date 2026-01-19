@@ -1,10 +1,29 @@
 import express from "express"
-import { createProduct, getProducts, getProductById, updateProduct, deleteProduct, userReview } from '../controllers/productController.js'
+import { createProduct, getProducts, getProductBySlug, updateProduct, deleteProduct, userReview } from '../controllers/productController.js'
+import { upload } from "../middlewares/upload.js";
+import { isAuth } from "../middlewares/isAuth.middleware.js"
+import { isAdmin } from "../middlewares/isAdmin.middleware.js"
 
 const router = express.Router()
 
-router.route("/").get(getProducts).post(createProduct)
-router.route("/:id").get(getProductById).put(updateProduct).delete(deleteProduct)
-router.route("/:id/review").post(userReview)
+router.route("/")
+.get(getProducts)
+.post(isAuth, isAdmin, upload.fields([
+    { name: "thumbnail", maxCount: 1 },
+    { name: "images", maxCount: 6 }
+  ]), createProduct)
+
+router.route("/:id")
+.put(isAuth, isAdmin, upload.fields([
+    { name: "thumbnail", maxCount: 1 },
+    { name: "images", maxCount: 6 }
+  ]), updateProduct)
+.delete(isAuth, isAdmin, deleteProduct)
+
+router.route("/:slug").get(getProductBySlug)
+
+router.route("/:id/review")
+.post(isAuth, userReview)
 
 export default router;
+

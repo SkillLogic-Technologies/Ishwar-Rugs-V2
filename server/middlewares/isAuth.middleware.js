@@ -24,7 +24,6 @@ export const isAuth = async (req, res, next) => {
     }
 
       req.user = user;
-      console.log(user.role);
     next();
   } catch (error) {
     return res.status(401).json({

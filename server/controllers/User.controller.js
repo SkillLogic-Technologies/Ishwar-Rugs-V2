@@ -15,7 +15,6 @@ export const loginUser = async (req, res) => {
             })
         }
         const otp = Math.floor(100000 + Math.random() * 900000);
-
         
         const prevOtp = await Otp.findOne({email});
         if (prevOtp) {
