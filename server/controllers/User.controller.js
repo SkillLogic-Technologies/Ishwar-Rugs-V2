@@ -6,6 +6,7 @@ import jwt from 'jsonwebtoken'
 export const loginUser = async (req, res) => {
     try {
         const { username, email } = req.body;
+        // const { email } = req.body; // 
         const subject = " Ishwarugs";
 
         if (!username || !email) {
@@ -42,8 +43,6 @@ export const loginUser = async (req, res) => {
         res.status(400).json({Success:false, message:"Failed to send OTP"})
     }
 }
-
-
 export const verifyLoginOtp = async (req, res) => {
     try {
         const {username, email, otp} = req.body;
@@ -59,7 +58,6 @@ export const verifyLoginOtp = async (req, res) => {
                 message:"Wrong otp"
             })
         }
-
 
        let user = await User.findOne({ email });
 
@@ -95,9 +93,28 @@ export const verifyLoginOtp = async (req, res) => {
         res.status(500).json({Success:false, message:"OTP verification failed"})
     }
 }
-
-
 export const myProfile = async (req, res) => {
     const user = await User.findById(req.user._id);
     res.json(user)
 }
+
+
+export const logoutUser = (req, res) => {
+  try {
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: false,      // production me true
+      sameSite: "strict"
+    });
+
+    return res.status(200).json({
+      success: true,
+      message: "Logged out successfully"
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Logout failed"
+    });
+  }
+};
