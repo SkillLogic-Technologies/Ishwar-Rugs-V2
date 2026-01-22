@@ -1,0 +1,17 @@
+import express from "express"
+import { contactUs, getContacts, getContactById, updateContact, deleteContact } from "../controllers/contactController.js"
+import { isAuth } from "../middlewares/isAuth.middleware.js"
+import { isAdmin } from "../middlewares/isAdmin.middleware.js"
+
+const router = express.Router()
+
+router.route("/")
+.get(isAuth, isAdmin, getContacts)
+.post(isAuth, contactUs)
+
+router.route("/:id")
+.get(isAuth, isAdmin, getContactById)
+.put(isAuth, isAdmin, updateContact)
+.delete(isAuth, isAdmin, deleteContact)
+
+export default router;

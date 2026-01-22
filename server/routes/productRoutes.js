@@ -13,6 +13,8 @@ router.route("/")
     { name: "images", maxCount: 6 }
   ]), createProduct)
 
+router.route("/:slug").get(getProductBySlug)
+
 router.route("/:id")
 .put(isAuth, isAdmin, upload.fields([
     { name: "thumbnail", maxCount: 1 },
@@ -20,7 +22,6 @@ router.route("/:id")
   ]), updateProduct)
 .delete(isAuth, isAdmin, deleteProduct)
 
-router.route("/:slug").get(getProductBySlug)
 
 router.route("/:id/review")
 .post(isAuth, userReview)

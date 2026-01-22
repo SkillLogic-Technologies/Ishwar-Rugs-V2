@@ -13,10 +13,10 @@ async function createProduct(req, res) {
         }
 
         const data = {...req.body}
-        if (req.files && req.files.thumbnail) {
+        if (req.files?.thumbnail?.length > 0) {
             data.thumbnail = req.files.thumbnail[0].path;
         }
-        if (req.files && req.files.images.length > 0) {
+        if (req.files?.images?.length > 0) {
             data.images = req.files.images.map(file => file.path);
         }
 
@@ -40,6 +40,12 @@ async function getProducts(req, res) {
             filter.category = req.query.category;
         }
 
+        if (req.query.size) {
+            const [len, wid] = req.query.size.split("x").map(Number);
+            filter.length = len;
+            filter.width = wid;
+        }
+
         if (req.query.minPrice && req.query.maxPrice) {
             filter.price = {
                 $gte: Number(req.query.minPrice),
@@ -50,7 +56,7 @@ async function getProducts(req, res) {
         const limit = Number(req.query.limit) || 20;
         const skip = (page - 1) * limit;
 
-        const products = await Product.find(filter).skip(skip).limit(limit);
+        const products = await Product.find(filter).populate("category", "name").skip(skip).limit(limit);
 
         res.status(200).json({success: true, data: products})
     } catch (error) {
@@ -82,14 +88,14 @@ async function updateProduct(req, res) {
         }
 
         const updatedData = { ...req.body };
-        if (req.files && req.files.thumbnail) {
+        if (req.files?.thumbnail?.length > 0) {
             if (product.thumbnail && fs.existsSync(product.thumbnail)) {
                 fs.unlinkSync(product.thumbnail);
             }
             updatedData.thumbnail = req.files.thumbnail[0].path;
         }
 
-        if (req.files && req.files.images?.length > 0) {
+        if (req.files?.images?.length > 0) {
             product.images?.forEach(img => fs.existsSync(img) && fs.unlinkSync(img));
             updatedData.images = req.files.images.map(file => file.path);
         }
@@ -134,7 +140,7 @@ async function userReview(req, res){
         }
 
         const review = {
-            user: req.user.id,
+            user: req.user._id,
             comment,
             rating: Number(rating)
         }
@@ -146,7 +152,7 @@ async function userReview(req, res){
         res.status(200).json({success : true, message: "Review added successfully"})
 
     } catch (error) {
-        res.status(500).json({ success: false, message: err.message });
+        res.status(500).json({ success: false, message: error.message });
     }
 }
 

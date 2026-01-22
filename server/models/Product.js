@@ -19,8 +19,8 @@ const productSchema = new mongoose.Schema(
         style: { type: String },    
         pileHeight: { type: String }, 
 
-        length: { type: Number },     // in cm
-        width: { type: Number },      // in cm
+        length: { type: Number },     // in m
+        width: { type: Number },      // in m
         weight: { type: Number },     // in kg
         shape: { type: String }, 
 

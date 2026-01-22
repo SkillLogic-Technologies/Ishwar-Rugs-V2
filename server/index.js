@@ -6,6 +6,9 @@ import connectDB from "./config/db.js";
 import categoryRoutes from './routes/categoryRoutes.js'
 import productRoutes from './routes/productRoutes.js'
 import userRoute from './routes/User.route.js';
+import wishlistRoutes from './routes/wishlistRoutes.js';
+import cartRoutes from './routes/cartRoutes.js';
+import contactRoutes from './routes/contactRoutes.js';
 
 const app = express();
 
@@ -21,6 +24,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use('/api/users', userRoute);
 app.use('/api/category', categoryRoutes)
 app.use('/api/product', productRoutes)
+app.use('/api/user/wishlist', wishlistRoutes)
+app.use('/api/user/cart', cartRoutes)
+app.use('/api/contact-us', contactRoutes)
 
 const PORT = Number(process.env.PORT) || 5000;
 const HOST = "127.0.0.1";

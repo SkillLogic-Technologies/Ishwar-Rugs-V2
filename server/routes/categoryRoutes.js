@@ -10,10 +10,11 @@ router.route("/")
 .get(getCategories)
 .post(isAuth, isAdmin, upload.single("image"), createCategory)
 
+router.route("/:slug").get(getCategoryBySlug)
+
 router.route("/:id")
 .put(isAuth, isAdmin, upload.single("image"), updateCategory)
 .delete(isAuth, isAdmin, deleteCategory)
 
-router.route("/:slug").get(getCategoryBySlug)
 
 export default router;
