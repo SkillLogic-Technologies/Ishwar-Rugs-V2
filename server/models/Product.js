@@ -7,6 +7,7 @@ const productSchema = new mongoose.Schema(
         slug : { type: String, unique: true, trim: true },
         description: { type: String },
         category: { type: mongoose.Schema.Types.ObjectId, ref: "Category", required: true },
+        collection: { type: mongoose.Schema.Types.ObjectId, ref: "Collection", default: null },
         price: { type: Number },
         mrp: { type: Number, required: true },
         discountPercent: { type: Number, default: 0 },
