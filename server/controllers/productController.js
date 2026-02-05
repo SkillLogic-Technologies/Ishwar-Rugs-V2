@@ -1,5 +1,6 @@
 import Product from "../models/Product.js";
 import Category from "../models/Category.js";
+import Collection from "../models/Collection.js";
 import fs from "fs"
 
 // create product...
@@ -77,7 +78,7 @@ async function getProducts(req, res) {
 // get product by id..
 async function getProductBySlug(req, res){
     try {
-        const product = await Product.findOne({slug: req.params.slug});
+        const product = await Product.findOne({slug: req.params.slug}).populate("category", "name");
         if(!product){
             return res.status(404).json({ success: false, message: "Product not found" })
         }
@@ -100,6 +101,25 @@ async function getProductsByCategorySlug(req,res){
         const products = await Product.find({ category: category._id });
 
         return res.status(200).json({ success: true, category: category.name, data: products});
+
+  } catch (error) {
+        return res.status(500).json({ success: false, message: error.message });
+  }
+}
+
+// get Products By Collection Slug
+async function getProductsByCollectionSlug(req,res){
+    try {
+        const { slug } = req.params;
+
+        const collection = await Collection.findOne({ slug });
+        if (!collection) {
+            return res.status(404).json({ success: false, message: "Collection not found" });
+        }
+
+        const products = await Product.find({ collection: collection._id });
+
+        return res.status(200).json({ success: true, collection: collection.name, data: products});
 
   } catch (error) {
         return res.status(500).json({ success: false, message: error.message });
@@ -179,9 +199,16 @@ async function userReview(req, res){
         }
 
         const review = {
-            user: req.user._id,
             comment,
-            rating: Number(rating)
+            rating: Number(rating),
+        };
+
+        if (req.user) {
+            // logged-in user
+            review.user = req.user._id;
+        } else {
+            // guest user
+            review.guestId = req.guestId;
         }
 
         product.reviews.push(review);
@@ -195,4 +222,4 @@ async function userReview(req, res){
     }
 }
 
-export { createProduct, getProducts, getProductBySlug, getProductsByCategorySlug, updateProduct, deleteProduct, userReview }
+export { createProduct, getProducts, getProductBySlug, getProductsByCategorySlug, getProductsByCollectionSlug, updateProduct, deleteProduct, userReview }
