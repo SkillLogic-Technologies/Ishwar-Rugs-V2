@@ -5,23 +5,30 @@ import cookieParser from "cookie-parser";
 import connectDB from "./config/db.js";
 import categoryRoutes from './routes/categoryRoutes.js'
 import productRoutes from './routes/productRoutes.js'
-import userRoute from './routes/User.route.js';
+import userRoutes from './routes/User.route.js';
 import wishlistRoutes from './routes/wishlistRoutes.js';
 import cartRoutes from './routes/cartRoutes.js';
 import contactRoutes from './routes/contactRoutes.js';
+import adminRoutes from "./routes/Admin.route.js";
+
 
 const app = express();
 
 dotenv.config();
 connectDB();
 
-app.use(cors());
+app.use(cors({
+  origin: "http://localhost:5173",
+  credentials: true
+}));
+
 app.use(express.json());
 app.use(cookieParser());
 app.use("/uploads", express.static("uploads"));
 app.use(express.urlencoded({ extended: false }));
 
-app.use('/api/users', userRoute);
+app.use('/api/users', userRoutes);
+app.use('/api/admin', adminRoutes);
 app.use('/api/category', categoryRoutes)
 app.use('/api/product', productRoutes)
 app.use('/api/user/wishlist', wishlistRoutes)

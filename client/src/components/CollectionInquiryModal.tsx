@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { insertInquirySchema, type InsertInquiry } from "@shared/schema";
+// import { insertInquirySchema, type InsertInquiry } from "@shared/schema";
 import { useMutation } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";

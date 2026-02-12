@@ -90,11 +90,11 @@ export const verifyLoginOtp = async (req, res) => {
         }
 
         const token = jwt.sign(
-        { userId: user._id },
+        { userId: user._id,  role: user.role },
         process.env.SECRET_KEY,
         { expiresIn: "3d" }
         );
-            res.cookie("token", token, {
+            res.cookie("userToken", token, {
             httpOnly: true,   
             secure: false,    
             sameSite: "strict",
@@ -114,9 +114,16 @@ export const verifyLoginOtp = async (req, res) => {
     }
 }
 export const myProfile = async (req, res) => {
-    const user = await User.findById(req.user._id);
-    res.json(user)
-}
+  res.status(200).json({
+    success: true,
+    user: {
+      _id: req.user._id,
+      username: req.user.username,
+      email: req.user.email,
+      role: req.user.role,
+    },
+  });
+};
 export const logoutUser = (req, res) => {
   try {
     res.clearCookie("token", {

@@ -1,8 +1,9 @@
 // pages/contact.tsx
 
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { zodResolver } from "@hookform/resolvers/zod";
+
 import {
   MapPin,
   Phone,
@@ -12,7 +13,7 @@ import {
   Linkedin,
 } from "lucide-react";
 import { api } from "@/lib/api";
-import { insertInquirySchema, type InsertInquiry } from "@shared/schema";
+// import { insertInquirySchema, type InsertInquiry } from "@shared/schema";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -38,8 +39,7 @@ export default function Contact() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const form = useForm<InsertInquiry>({
-    resolver: zodResolver(insertInquirySchema),
+  const form = useForm({
     defaultValues: {
       name: "",
       email: "",
@@ -69,8 +69,8 @@ export default function Contact() {
     },
   });
 
-  const onSubmit = (data: InsertInquiry) => {
-    createInquiryMutation.mutate(data);
+  const onSubmit = (data: any) => {
+    console.log("FORM DATA:", data);
   };
 
   return (
@@ -342,7 +342,7 @@ export default function Contact() {
                       "Our artisans handcraft your rug with the finest materials."}
                   </p>
                 </div>
-              )
+              ),
             )}
           </div>
 

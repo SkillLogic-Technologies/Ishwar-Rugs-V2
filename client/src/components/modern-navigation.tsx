@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "wouter";
 import { Menu, X, Sun, Moon, Search, ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -13,10 +13,34 @@ import {
 } from "@/components/ui/navigation-menu";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
+type AuthUser = {
+  _id: string;
+  username: string;
+  email: string;
+  role: "admin" | "user";
+};
+
 export default function ModernNavigation() {
   const [isOpen, setIsOpen] = useState(false);
   const [location] = useLocation();
   const { theme, setTheme } = useTheme();
+  const [user, setUser] = useState<AuthUser | null>(null);
+
+  useEffect(() => {
+    fetch("http://localhost:3000/api/admin/profile", {
+      credentials: "include",
+    })
+      .then((res) => {
+        if (!res.ok) return null;
+        return res.json();
+      })
+      .then((data) => {
+        if (data?.admin) {
+          setUser(data.admin);
+        }
+      })
+      .catch(() => setUser(null));
+  }, []);
 
   return (
     <nav className="fixed w-full top-0 z-50 glass-effect border-b border-white/10">
@@ -134,6 +158,10 @@ export default function ModernNavigation() {
             >
               CONTACT
             </Link>
+
+            {user?.role === "admin" && (
+              <Link href="/admin/dashboard">DASHBOARD</Link>
+            )}
           </div>
 
           {/* Action Buttons */}
@@ -256,6 +284,15 @@ export default function ModernNavigation() {
                   >
                     CONTACT
                   </Link>
+
+                  {user?.role === "admin" && (
+                    <Link
+                      href="/admin/dashboard"
+                      className="text-foreground hover:text-premium-gold transition-colors text-lg font-semibold"
+                    >
+                      DASHBOARD
+                    </Link>
+                  )}
                 </div>
               </SheetContent>
             </Sheet>
