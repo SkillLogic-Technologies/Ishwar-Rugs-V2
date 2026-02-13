@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
-import { Menu, X, Sun, Moon, Search, ShoppingBag } from "lucide-react";
+import { Menu, X, Sun, Moon, Search, ShoppingBag,User} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/components/theme-provider";
+import Login from "@/pages/login";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -17,6 +18,12 @@ export default function ModernNavigation() {
   const [isOpen, setIsOpen] = useState(false);
   const [location] = useLocation();
   const { theme, setTheme } = useTheme();
+  const [showLogin, setShowLogin] = useState(false);
+
+  const [, navigate] = useLocation();
+  const token = localStorage.getItem("token");
+const isVerifyPage = location === "/verify";
+
 
   return (
     <nav className="fixed w-full top-0 z-50 glass-effect border-b border-white/10">
@@ -173,6 +180,106 @@ export default function ModernNavigation() {
               </span>
             </Button>
 
+
+
+            <div className="relative group">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-gray-800 dark:text-white 
+                          hover:text-yellow-600 dark:hover:text-premium-gold 
+                          hover:bg-black/5 dark:hover:bg-white/10 
+                          transition-all duration-300 relative"
+              >
+                <User className="h-5 w-5" />
+              </Button>
+
+              {/* Dropdown */}  
+           <div
+  className="absolute right-0 mt-3 w-44 rounded-xl
+    bg-white dark:bg-[#1c1917]
+    border border-gray-200 dark:border-white/10
+    shadow-xl
+    opacity-0 invisible 
+    group-hover:opacity-100 group-hover:visible
+    transition-all duration-200 z-50"
+>
+  {/* 🟡 VERIFY PAGE → Verify + Logout */}
+  {isVerifyPage && (
+    <>
+      <button
+        onClick={() => navigate("/verify")}
+        className="block w-full text-left px-5 py-3 text-sm 
+          text-gray-800 dark:text-white
+          hover:bg-gray-100 dark:hover:bg-white/5 transition"
+      >
+        Verify
+      </button>
+
+      <div className="border-t border-gray-200 dark:border-white/10" />
+
+      <button
+        onClick={() => {
+          localStorage.removeItem("token");
+          window.location.reload();
+        }}
+        className="w-full text-left px-5 py-3 text-sm 
+          text-gray-800 dark:text-white
+          hover:bg-gray-100 dark:hover:bg-white/5 transition"
+      >
+        Logout
+      </button>
+    </>
+  )}
+
+  {/* 🔵 LOGGED IN (hero after verify) → Logout only */}
+  {!isVerifyPage && token && (
+    <button
+      onClick={() => {
+        localStorage.removeItem("token");
+        window.location.reload();
+      }}
+      className="w-full text-left px-5 py-3 text-sm 
+        text-gray-800 dark:text-white
+        hover:bg-gray-100 dark:hover:bg-white/5 transition"
+    >
+      Logout
+    </button>
+  )}
+
+  {/* 🟢 NORMAL / REFRESH → Login + Logout */}
+  {!isVerifyPage && !token && (
+    <>
+      <button
+        onClick={() => setShowLogin(true)}
+        className="block w-full text-left px-5 py-3 text-sm 
+          text-gray-800 dark:text-white
+          hover:bg-gray-100 dark:hover:bg-white/5 transition"
+      >
+        Login
+      </button>
+
+      <div className="border-t border-gray-200 dark:border-white/10" />
+
+      <button
+        onClick={() => {
+          localStorage.removeItem("token");
+          window.location.reload();
+        }}
+        className="w-full text-left px-5 py-3 text-sm 
+          text-gray-800 dark:text-white
+          hover:bg-gray-100 dark:hover:bg-white/5 transition"
+      >
+        Logout
+      </button>
+    </>
+  )}
+</div>
+
+
+                      </div>
+
+
             {/* Mobile Menu */}
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger asChild>
@@ -262,6 +369,44 @@ export default function ModernNavigation() {
           </div>
         </div>
       </div>
+
+      
+{showLogin && (
+  <div
+    className="
+    my-24
+    flex items-center justify-center z-50
+    
+    "
+    onClick={() => setShowLogin(false)}
+  >
+    {/* Modal Card */}
+    <div
+      className="
+      relative
+      w-[90%] max-w-md
+      p-8
+      rounded-2xl
+      bg-[#020617]
+      border border-white/10
+      shadow-2xl
+      "
+      onClick={(e) => e.stopPropagation()}
+    >
+      {/* Close */}
+      <button
+        onClick={() => setShowLogin(false)}
+        className="absolute top-3 right-3 text-white text-lg"
+      >
+        ✖
+      </button>
+
+      <Login />
+    </div>
+  </div>
+)}
     </nav>
+
   );
 }
+

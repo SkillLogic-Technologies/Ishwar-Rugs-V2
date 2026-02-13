@@ -6,18 +6,16 @@ const otpSchema = new mongoose.Schema({
       required: true,
       unique:true
     },
-
     otp: {
       type: String,
       required: true
     },
-
    expiresAt: {
       type: Date,
       default: () => Date.now() + 5 * 60 * 1000,
       index: { expires: "5m" }
     }
-
+    
 },{timestamps:true});
 
 const Otp = mongoose.model("OTP", otpSchema);

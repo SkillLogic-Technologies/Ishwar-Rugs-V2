@@ -3,7 +3,7 @@ import { createProduct, getProducts, getProductBySlug, getProductsByCategorySlug
 import { upload } from "../middlewares/upload.js";
 import { isAuth } from "../middlewares/isAuth.middleware.js"
 import { isAdmin } from "../middlewares/isAdmin.middleware.js"
-import { optionalAuth } from "../middlewares/optionalAuth.middleware.js"
+// import { optionalAuth } from "../middlewares/optionalAuth.middleware.js"
 
 const router = express.Router()
 
@@ -26,8 +26,8 @@ router.route("/:id")
 .delete(isAuth, isAdmin, deleteProduct)
 
 
-router.route("/:id/review")
-.post(optionalAuth, userReview)
+// router.route("/:id/review")
+// .post(optionalAuth, userReview)
 
 export default router;
 

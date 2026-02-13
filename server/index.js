@@ -11,10 +11,10 @@ import wishlistRoutes from './routes/wishlistRoutes.js';
 import cartRoutes from './routes/cartRoutes.js';
 import contactRoutes from './routes/contactRoutes.js';
 import path from "path";
-import { attachGuestId } from "./middlewares/guestId.middleware.js";
+// import { attachGuestId } from "./middlewares/guestId.middleware.js";
+
 
 const app = express();
-
 dotenv.config();
 connectDB();
 
@@ -25,7 +25,7 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(cookieParser());
-app.use(attachGuestId);
+// app.use(attachGuestId);
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 app.use(express.urlencoded({ extended: false }));
 

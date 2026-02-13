@@ -1,4 +1,4 @@
-import { Switch, Route } from "wouter";
+import { Switch, Route,useLocation  } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
@@ -18,7 +18,8 @@ import About from "@/pages/about";
 import Contact from "@/pages/contact";
 import Stories from "@/pages/stories";
 import NotFound from "@/pages/not-found";
-
+// import Login from "@/pages/login";
+import Verify from "@/pages/verify";
 // Admin pages
 import AdminLogin from "@/pages/admin/login";
 import AdminDashboard from "@/pages/admin/dashboard";
@@ -27,7 +28,6 @@ import AdminProducts from "@/pages/admin/products";
 import InquiriesPage from "@/pages/admin/inquiries";
 import AdminCustomers from "@/pages/admin/customers";
 import AdminOrders from "@/pages/admin/orders";
-
 import "@/components/styles/carousel.css";
 
 function Router() {
@@ -35,7 +35,8 @@ function Router() {
     <div className="min-h-screen flex flex-col bg-background text-foreground">
       <ModernNavigation />
       <ScrollToTop /> {/* ✅ Scroll to top on route change */}
-      <main className="flex-1">
+
+      <main className="flex-1 ">
         <Switch>
           {/* Public routes */}
           <Route path="/" component={Home} />
@@ -52,6 +53,10 @@ function Router() {
           <Route path="/admin/inquiries" component={InquiriesPage} />
           <Route path="/admin/customers" component={AdminCustomers} />
           <Route path="/admin/orders" component={AdminOrders} />
+
+           {/* <Route path="/login" component={Login} /> */}
+          < Route path="/verify" component={Verify}/>
+
 
           {/* Dynamic public routes */}
           <Route path="/collections/:slug" component={CollectionDetail} />
