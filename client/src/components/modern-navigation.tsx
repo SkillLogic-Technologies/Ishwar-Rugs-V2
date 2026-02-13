@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Link, useLocation } from "wouter";
-import { Menu, X, Sun, Moon, Search, ShoppingBag } from "lucide-react";
+import { Menu, X, Sun, Moon, Search, Heart, ShoppingBag } from "lucide-react";
+import { useWishlist } from "@/context/WishlistContext";
+import { useCart } from "@/context/CartContext";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/components/theme-provider";
 import {
@@ -17,6 +19,9 @@ export default function ModernNavigation() {
   const [isOpen, setIsOpen] = useState(false);
   const [location] = useLocation();
   const { theme, setTheme } = useTheme();
+  const { wishlistCount } = useWishlist();
+  const { cartCount } = useCart();
+
 
   return (
     <nav className="fixed w-full top-0 z-50 glass-effect border-b border-white/10">
@@ -161,17 +166,33 @@ export default function ModernNavigation() {
               <Search className="h-5 w-5" />
             </Button>
 
+              {/* WISHLIST */}
+              <Link href="/wishlist">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-foreground hover:text-premium-gold hover:bg-white/10 transition-all duration-300 relative"
+                >
+                  <Heart className="h-5 w-5" />
+                  <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
+                    {wishlistCount}
+                  </span>
+                </Button>
+              </Link>
+
             {/* Shopping Bag */}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="text-foreground hover:text-premium-gold hover:bg-white/10 transition-all duration-300 relative"
-            >
-              <ShoppingBag className="h-5 w-5" />
-              <span className="absolute -top-1 -right-1 bg-premium-gold text-primary-brown text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
-                0
-              </span>
-            </Button>
+            <Link href="/cart">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-foreground hover:text-premium-gold hover:bg-white/10 transition-all duration-300 relative"
+              >
+                <ShoppingBag className="h-5 w-5" />
+                <span className="absolute -top-1 -right-1 bg-premium-gold text-primary-brown text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
+                    {cartCount}
+                </span>
+              </Button>
+            </Link>
 
             {/* Mobile Menu */}
             <Sheet open={isOpen} onOpenChange={setIsOpen}>

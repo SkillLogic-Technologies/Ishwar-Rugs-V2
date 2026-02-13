@@ -3,10 +3,11 @@ import { Play } from "lucide-react";
 import { Link } from "wouter";
 import { api } from "@/lib/api";
 import HeroCarousel from "@/components/hero-carousel";
-import { useState } from "react"; // ✅ Add this
+import { useState } from "react"; 
 import CollectionGrid from "@/components/collection-grid";
 import { Button } from "@/components/ui/button";
 import Carousel3D from "@/components/Carousel3D";
+import Categories from "@/components/categories";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function Home() {
@@ -41,9 +42,10 @@ export default function Home() {
     <div className="min-h-screen">
       {/* Hero Carousel */}
       <HeroCarousel />
+      <Categories/>
 
       {/* Brand Introduction */}
-      <section className="py-32 px-4 bg-gradient-to-b from-background via-luxury-brown to-background">
+      <section className="py-10 px-4 bg-gradient-to-b from-background via-luxury-brown to-background">
         <div className="max-w-8xl mx-auto text-center">
           <h2 className="font-serif text-3xl md:text-5xl lg:text-6xl text-premium-gold leading-relaxed mb-8 font-light">
             Fine handcrafted carpets since 1925
@@ -370,7 +372,7 @@ export default function Home() {
                     decoding="async"
                   />
                 </div>
-                <h3 className="font-serif text-2xl font-semibold text-foreground mb-4">
+                <h3 className="text-2xl font-semibold text-foreground mb-4">
                   {item.title}
                 </h3>
                 <p className="text-foreground/80 leading-relaxed">

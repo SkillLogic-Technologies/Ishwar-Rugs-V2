@@ -174,7 +174,7 @@ async function removeFromCart(req, res) {
       populate: { path: "category", select: "name" },
     });
 
-    res.status(200).json({ success: true, items: updatedCart.items });
+    res.status(200).json({ success: true, items: updatedCart.items, cartTotal: updatedCart.cartTotal });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

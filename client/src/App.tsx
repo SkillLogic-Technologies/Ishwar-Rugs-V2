@@ -1,7 +1,8 @@
 import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
-import { Toaster } from "@/components/ui/toaster";
+// import { Toaster } from "@/components/ui/toaster";
+import { Toaster } from "react-hot-toast";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/components/theme-provider";
 import ScrollToTop from "@/components/ScrollToTop"; // ✅ NEW
@@ -9,15 +10,23 @@ import ScrollToTop from "@/components/ScrollToTop"; // ✅ NEW
 import ModernNavigation from "@/components/modern-navigation";
 import ModernFooter from "@/components/modern-footer";
 
+import { useWishlist } from "@/context/WishlistContext";
+import { useCart } from "@/context/CartContext";
+import { useEffect } from "react";
+import axios from "axios";
+
 // Public pages
 import Home from "@/pages/home";
 import Collections from "@/pages/collections";
 import CollectionDetail from "@/pages/collection-detail";
+import ProductDetail from "@/pages/ProductDetail";
 import CategoryPage from "@/pages/category/category";
 import About from "@/pages/about";
 import Contact from "@/pages/contact";
 import Stories from "@/pages/stories";
 import NotFound from "@/pages/not-found";
+import WishlistPage from "./pages/WishlistPage";
+import CartPage from "./pages/CartPage";
 
 // Admin pages
 import AdminLogin from "@/pages/admin/login";
@@ -31,6 +40,41 @@ import AdminOrders from "@/pages/admin/orders";
 import "@/components/styles/carousel.css";
 
 function Router() {
+  const { setWishlistCount } = useWishlist();
+  const { setCartCount } = useCart();
+
+  const fetchCartCount = async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/api/user/cart",
+        { withCredentials: true }
+      );
+
+      const items = res.data.items || [];
+
+      const count = items.reduce(
+        (acc: number, item: any) => acc + item.quantity, 0
+      );
+
+      setCartCount(count);
+
+    } catch (error) {
+      console.log("Cart count error");
+    }
+  };
+
+  const fetchWishlist = async () => {
+    const res = await axios.get('http://localhost:5000/api/user/wishlist',
+      { withCredentials: true }
+    );
+    const items = res.data.data || [];
+    setWishlistCount(items.length);
+  };
+
+  useEffect(() => {
+    fetchWishlist();
+    fetchCartCount();
+  }, []);
+  
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
       <ModernNavigation />
@@ -55,7 +99,10 @@ function Router() {
 
           {/* Dynamic public routes */}
           <Route path="/collections/:slug" component={CollectionDetail} />
-          <Route path="/category/:category" component={CategoryPage} />
+          <Route path="/product/:slug" component={ProductDetail} />
+          <Route path="/category/:slug"><CategoryPage /></Route>
+         <Route path="/wishlist"> <WishlistPage/> </Route>
+         <Route path="/cart"> <CartPage/> </Route>
 
           {/* Fallback */}
           <Route component={NotFound} />
@@ -71,7 +118,8 @@ function App() {
     <ThemeProvider defaultTheme="dark" storageKey="ishwar-theme">
       <QueryClientProvider client={queryClient}>
         <TooltipProvider>
-          <Toaster />
+          {/* <Toaster /> */}
+          <Toaster position="top-center" />
           <Router />
         </TooltipProvider>
       </QueryClientProvider>
