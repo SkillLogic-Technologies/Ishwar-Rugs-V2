@@ -79,19 +79,9 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    /* font-family: 'Playfair Display', serif; */
-    /* font-family: "Outfit", sans-serif; */
     font-family: "Roboto", sans-serif;
   }
 }
-
-
-/* .outfit-<uniquifier> {
-  
-  font-optical-sizing: auto;
-  font-weight: <weight>;
-  font-style: normal;
-} */
 
 @layer utilities {
   .font-serif {

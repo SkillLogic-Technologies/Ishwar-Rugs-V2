@@ -20,7 +20,7 @@ router.get("/category/:slug", getProductsByCategorySlug);
 router.get("/collection/:slug", getProductsByCollectionSlug);
 
 router.route("/:id")
-.put(isAuth, isAdmin, upload.fields([
+.put(upload.fields([
     { name: "thumbnail", maxCount: 1 },
     { name: "images", maxCount: 6 }
   ]), updateProduct)

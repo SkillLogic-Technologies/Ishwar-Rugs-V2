@@ -10,6 +10,8 @@ import userRoute from './routes/User.route.js';
 import wishlistRoutes from './routes/wishlistRoutes.js';
 import cartRoutes from './routes/cartRoutes.js';
 import contactRoutes from './routes/contactRoutes.js';
+import activityRoutes from './routes/activityRoutes.js';
+import dashboardStatsRoutes from './routes/dashboardStatsRoutes.js';
 import path from "path";
 import { attachGuestId } from "./middlewares/guestId.middleware.js";
 
@@ -26,6 +28,7 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 app.use(attachGuestId);
+app.use("/api/activity", activityRoutes);
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 app.use(express.urlencoded({ extended: false }));
 
@@ -36,6 +39,7 @@ app.use('/api/product', productRoutes)
 app.use('/api/user/wishlist', wishlistRoutes)
 app.use('/api/user/cart', cartRoutes)
 app.use('/api/contact-us', contactRoutes)
+app.use('/api/admin', dashboardStatsRoutes)
 
 const PORT = Number(process.env.PORT) || 5000;
 const HOST = "127.0.0.1";

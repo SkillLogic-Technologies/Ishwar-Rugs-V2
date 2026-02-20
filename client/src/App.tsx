@@ -9,11 +9,14 @@ import ScrollToTop from "@/components/ScrollToTop"; // ✅ NEW
 
 import ModernNavigation from "@/components/modern-navigation";
 import ModernFooter from "@/components/modern-footer";
+import { useLocation } from "react-router-dom";
 
 import { useWishlist } from "@/context/WishlistContext";
 import { useCart } from "@/context/CartContext";
 import { useEffect } from "react";
 import axios from "axios";
+
+import TrackVisit from "@/components/TrackVisit";
 
 // Public pages
 import Home from "@/pages/home";
@@ -32,16 +35,21 @@ import CartPage from "./pages/CartPage";
 import AdminLogin from "@/pages/admin/login";
 import AdminDashboard from "@/pages/admin/dashboard";
 import AdminCollections from "@/pages/admin/collections";
+import AdminCategories from "@/pages/admin/categories";
 import AdminProducts from "@/pages/admin/products";
+import AdminAddProducts from "@/pages/admin/AddProduct";
 import InquiriesPage from "@/pages/admin/inquiries";
 import AdminCustomers from "@/pages/admin/customers";
 import AdminOrders from "@/pages/admin/orders";
+import AdminLayout from "@/pages/admin/AdminLayout"
 
 import "@/components/styles/carousel.css";
 
 function Router() {
   const { setWishlistCount } = useWishlist();
   const { setCartCount } = useCart();
+  const location = useLocation();
+  const isAdminRoute = location.pathname.startsWith("/admin");
 
   const fetchCartCount = async () => {
     try {
@@ -77,7 +85,8 @@ function Router() {
   
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
-      <ModernNavigation />
+      <TrackVisit />
+      {!isAdminRoute && <ModernNavigation />}
       <ScrollToTop /> {/* ✅ Scroll to top on route change */}
       <main className="flex-1">
         <Switch>
@@ -90,9 +99,29 @@ function Router() {
 
           {/* Admin routes */}
           <Route path="/admin/login" component={AdminLogin} />
-          <Route path="/admin/dashboard" component={AdminDashboard} />
+          <Route path="/admin/dashboard" component={() => (
+              <AdminLayout>
+                <AdminDashboard />
+              </AdminLayout>
+            )} />
           <Route path="/admin/collections" component={AdminCollections} />
-          <Route path="/admin/products" component={AdminProducts} />
+          <Route path="/admin/products" component={() => (
+              <AdminLayout>
+                <AdminProducts />
+              </AdminLayout>
+            )}/>
+          <Route path="/admin/add-products" component={() => (
+            <AdminLayout>
+                <AdminAddProducts />
+            </AdminLayout>
+          )}/>
+          <Route path="/admin/edit-products/:slug" component={() => (
+            <AdminLayout>
+                <AdminAddProducts />
+            </AdminLayout>
+          )}/>
+          <Route path="/admin/inquiries" component={InquiriesPage} />
+          <Route path="/admin/categories" component={AdminCategories} />
           <Route path="/admin/inquiries" component={InquiriesPage} />
           <Route path="/admin/customers" component={AdminCustomers} />
           <Route path="/admin/orders" component={AdminOrders} />
