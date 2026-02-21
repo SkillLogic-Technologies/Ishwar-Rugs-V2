@@ -1,11 +1,10 @@
 import { Switch, Route } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
-// import { Toaster } from "@/components/ui/toaster";
 import { Toaster } from "react-hot-toast";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/components/theme-provider";
-import ScrollToTop from "@/components/ScrollToTop"; // ✅ NEW
+import ScrollToTop from "@/components/ScrollToTop";
 
 import ModernNavigation from "@/components/modern-navigation";
 import ModernFooter from "@/components/modern-footer";
@@ -36,9 +35,11 @@ import AdminLogin from "@/pages/admin/login";
 import AdminDashboard from "@/pages/admin/dashboard";
 import AdminCollections from "@/pages/admin/collections";
 import AdminCategories from "@/pages/admin/categories";
+import AdminAddCategory from "@/pages/admin/AddCategory";
 import AdminProducts from "@/pages/admin/products";
 import AdminAddProducts from "@/pages/admin/AddProduct";
 import InquiriesPage from "@/pages/admin/inquiries";
+import InquiryDetailPage from "@/pages/admin/InquiryDetailPage";
 import AdminCustomers from "@/pages/admin/customers";
 import AdminOrders from "@/pages/admin/orders";
 import AdminLayout from "@/pages/admin/AdminLayout"
@@ -82,7 +83,7 @@ function Router() {
     fetchWishlist();
     fetchCartCount();
   }, []);
-  
+
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
       <TrackVisit />
@@ -100,29 +101,51 @@ function Router() {
           {/* Admin routes */}
           <Route path="/admin/login" component={AdminLogin} />
           <Route path="/admin/dashboard" component={() => (
-              <AdminLayout>
-                <AdminDashboard />
-              </AdminLayout>
-            )} />
+            <AdminLayout>
+              <AdminDashboard />
+            </AdminLayout>
+          )} />
           <Route path="/admin/collections" component={AdminCollections} />
           <Route path="/admin/products" component={() => (
-              <AdminLayout>
-                <AdminProducts />
-              </AdminLayout>
-            )}/>
+            <AdminLayout>
+              <AdminProducts />
+            </AdminLayout>
+          )} />
           <Route path="/admin/add-products" component={() => (
             <AdminLayout>
-                <AdminAddProducts />
+              <AdminAddProducts />
             </AdminLayout>
-          )}/>
+          )} />
           <Route path="/admin/edit-products/:slug" component={() => (
             <AdminLayout>
-                <AdminAddProducts />
+              <AdminAddProducts />
             </AdminLayout>
-          )}/>
-          <Route path="/admin/inquiries" component={InquiriesPage} />
-          <Route path="/admin/categories" component={AdminCategories} />
-          <Route path="/admin/inquiries" component={InquiriesPage} />
+          )} />
+          <Route path="/admin/inquiries" component={() => (
+            <AdminLayout>
+              <InquiriesPage />
+            </AdminLayout>
+          )} />
+          <Route path="/admin/inquiries/:id" component={() => (
+            <AdminLayout>
+              <InquiryDetailPage />
+            </AdminLayout>
+          )} />
+          <Route path="/admin/categories" component={() => (
+            <AdminLayout>
+              <AdminCategories />
+            </AdminLayout>
+          )} />
+          <Route path="/admin/add-categories" component={() => (
+            <AdminLayout>
+              <AdminAddCategory />
+            </AdminLayout>
+          )} />
+          <Route path="/admin/edit-category/:slug" component={() => (
+            <AdminLayout>
+              <AdminAddCategory />
+            </AdminLayout>
+          )} />
           <Route path="/admin/customers" component={AdminCustomers} />
           <Route path="/admin/orders" component={AdminOrders} />
 
@@ -130,8 +153,8 @@ function Router() {
           <Route path="/collections/:slug" component={CollectionDetail} />
           <Route path="/product/:slug" component={ProductDetail} />
           <Route path="/category/:slug"><CategoryPage /></Route>
-         <Route path="/wishlist"> <WishlistPage/> </Route>
-         <Route path="/cart"> <CartPage/> </Route>
+          <Route path="/wishlist"> <WishlistPage /> </Route>
+          <Route path="/cart"> <CartPage /> </Route>
 
           {/* Fallback */}
           <Route component={NotFound} />
