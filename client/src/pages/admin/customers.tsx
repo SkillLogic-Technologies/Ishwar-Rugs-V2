@@ -14,7 +14,7 @@ export default function AdminCustomers() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // ✅ Fetch users
+  //  Fetch users
   const fetchUsers = async () => {
     try {
       setLoading(true);
@@ -28,14 +28,14 @@ export default function AdminCustomers() {
     }
   };
 
-  // ✅ Delete user
+  //  Delete user
   const handleDelete = async (id: string) => {
     if (!confirm("Are you sure you want to delete this user?")) return;
 
     try {
       await axios.delete(`http://127.0.0.1:5000/api/users/all/${id}`);
 
-      // 🔥 instant UI update (better UX)
+      //  instant UI update (better UX)
       setUsers((prev) => prev.filter((u) => u._id !== id));
     } catch (error) {
       console.error("Delete error:", error);

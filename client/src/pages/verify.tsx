@@ -11,7 +11,7 @@ export default function Verify() {
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // ✅ Auto fill user from sessionStorage
+  // Auto fill user from sessionStorage
   useEffect(() => {
     const storedUser = sessionStorage.getItem("otpUser");
 
@@ -55,22 +55,22 @@ export default function Verify() {
 
       if (res.ok) {
         setSuccess(true);
-        setMessage("Logged in Successfully ✨");
+        setMessage("Logged in Successfully ");
 
-        // ✅ Save token
+        //  Save token
         localStorage.setItem("token", data.token);
 
 
-          // ⭐⭐⭐ USER SAVE (VERY IMPORTANT) ⭐⭐⭐
+          // USER SAVE (VERY IMPORTANT) 
         sessionStorage.setItem("verifiedUser", JSON.stringify(data.user));
 
-        // ⭐⭐⭐ NAVBAR KO SIGNAL ⭐⭐⭐
+        //  NAVBAR KO SIGNAL 
         window.dispatchEvent(new Event("userVerified"));
 
-        // ✅ Clear temp data
+        //  Clear temp data
         sessionStorage.removeItem("otpUser");
 
-        // ✅ Redirect to home (HeroCarousel)
+        //  Redirect to home (HeroCarousel)
         setTimeout(() => {
           navigate("/");
         }, 1200);

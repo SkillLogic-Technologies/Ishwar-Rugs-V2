@@ -60,13 +60,6 @@ return (
         Login
       </h2>
 
-                {/* <input
-              type="text"
-              placeholder="Username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              className="w-full mb-4 px-4 py-3 rounded-lg bg-white/10 border border-white/20 outline-none"
-            /> */}
 
         <input
           type="email"

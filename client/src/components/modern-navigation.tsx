@@ -58,7 +58,7 @@ const handleLogout = async () => {
   try {
     await fetch("http://127.0.0.1:5000/api/users/logout", {
       method: "POST",
-      credentials: "include", // ⭐ VERY IMPORTANT
+      credentials: "include", 
     });
   } catch (err) {
     console.error("Logout error", err);
@@ -277,7 +277,7 @@ const handleLogout = async () => {
             group-hover:opacity-100 group-hover:visible
             transition-all duration-200 z-50"
         >
-          {/* 🟡 VERIFY PAGE → Verify + Logout */}
+          {/* VERIFY PAGE → Verify + Logout */}
           {isVerifyPage && (
             <>
               <button
@@ -304,7 +304,7 @@ const handleLogout = async () => {
     </>
   )}
 
-  {/* 🔵 LOGGED IN (hero after verify) → Logout only */}
+  {/*  LOGGED IN (hero after verify) → Logout only */}
   {!isVerifyPage && token && (
     <button
       onClick={() => {
@@ -318,7 +318,7 @@ const handleLogout = async () => {
     </button>
   )}
 
-  {/* 🟢 NORMAL / REFRESH → Login + Logout */}
+  {/*  NORMAL / REFRESH → Login + Logout */}
   {!isVerifyPage && !token && (
     <>
       <button
@@ -333,9 +333,7 @@ const handleLogout = async () => {
   )}
 </div>
 
-
                       </div>
-
             {/* Mobile Menu */}
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
               <SheetTrigger asChild>

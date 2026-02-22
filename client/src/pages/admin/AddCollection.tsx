@@ -28,7 +28,7 @@ export default function AddCollection() {
     isFeatured: false,
   });
 
-  // ✅ handle change
+  //  handle change
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -48,7 +48,7 @@ export default function AddCollection() {
     }
   };
 
-  // ✅ SUBMIT
+  //  SUBMIT
   const handleSubmit = async () => {
     try {
       setLoading(true);
@@ -80,13 +80,13 @@ export default function AddCollection() {
           `http://localhost:5000/api/collection/${collectionId}`,
           formData
         );
-        alert("Collection Updated ✅");
+        alert("Collection Updated ");
       } else {
         await axios.post(
           "http://localhost:5000/api/collection",
           formData
         );
-        alert("Collection Added ✅");
+        alert("Collection Added Successfully");
 
         setForm({
           name: "",
@@ -104,7 +104,7 @@ export default function AddCollection() {
     }
   };
 
-  // ✅ fetch for edit
+  //  fetch for edit
   const fetchCollectionBySlug = async (slug: string) => {
     try {
       const res = await axios.get(
