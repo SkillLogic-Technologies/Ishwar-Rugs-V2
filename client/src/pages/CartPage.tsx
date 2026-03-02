@@ -2,287 +2,293 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { useCart } from "../context/CartContext";
-import { Link } from "wouter"
-
+import { Link } from "wouter";
+import { useLocation } from "wouter";
 
 const CartPage = () => {
-    const [cartItems, setCartItems] = useState([]);
-    const [cartTotal, setCartTotal] = useState(0);
-    const { setCartCount } = useCart();
+  const [cartItems, setCartItems] = useState<any[]>([]);
+  const [cartTotal, setCartTotal] = useState(0);
+  const { setCartCount } = useCart();
+  const [, navigate] = useLocation();
 
+  const BASE_URL = "http://localhost:5000/";
 
-    const BASE_URL = "http://localhost:5000/"
+  const [shippingAddress, setShippingAddress] = useState({
+    fullName: "",
+    phone: "",
+    addressLine: "",
+    city: "",
+    state: "",
+    pincode: "",
+  });
 
-    useEffect(() => {
-        fetchCartItems();
-    }, []);
+  useEffect(() => {
+    fetchCartItems();
+  }, []);
 
-    const fetchCartItems = async () => {
-        const res = await axios.get(`${BASE_URL}api/user/cart`,{withCredentials:true});
-        setCartItems(res.data.items);
-        setCartTotal(res.data.cartTotal);
-
-        const count = res.data.items.reduce(
-          (acc: number, item: any) =>
-            acc + item.quantity,
-          0
-        );
-
-        setCartCount(count);
-        
-    };
-
-    const updateQuantity = async ( itemId: string, action: "inc" | "dec" ) => {
-      const res = await axios.put(
-        `${BASE_URL}api/user/cart/update-quantity`,
-        { itemId, action },
-        { withCredentials: true }
-      );
-    toast.success("Quantity updated successfully")
+  const fetchCartItems = async () => {
+    const res = await axios.get(`${BASE_URL}api/user/cart`, {
+      withCredentials: true,
+    });
 
     setCartItems(res.data.items);
     setCartTotal(res.data.cartTotal);
 
     const count = res.data.items.reduce(
-  (acc: number, item: any) =>
-    acc + item.quantity,
-  0
-);
+      (acc: number, item: any) => acc + item.quantity,
+      0,
+    );
 
-setCartCount(count);
-    };
+    setCartCount(count);
+  };
 
-    const removeItem = async (itemId: string) => {
-      const res = await axios.delete(
-    `${BASE_URL}api/user/cart/remove-item`,
-    {
-      data: { itemId },          
-      withCredentials: true,
+  const handleAddressChange = (e: any) => {
+    setShippingAddress({
+      ...shippingAddress,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  // 🔥 STRONG VALIDATION FUNCTION
+  const validateForm = () => {
+    const nameRegex = /^[A-Za-z\s]+$/;
+    const phoneRegex = /^[0-9]{10}$/;
+    const pincodeRegex = /^[0-9]{6}$/;
+
+    if (!nameRegex.test(shippingAddress.fullName)) {
+      toast.error("Enter valid full name (letters only)");
+      return false;
     }
-  );
 
-  toast.success("Removed from cart")
-  setCartItems(res.data.items);
-  setCartTotal(res.data.cartTotal);
+    if (!phoneRegex.test(shippingAddress.phone)) {
+      toast.error("Enter valid 10 digit phone number");
+      return false;
+    }
 
-  const count = res.data.items.reduce(
-  (acc: number, item: any) =>
-    acc + item.quantity,
-  0
-);
+    if (shippingAddress.addressLine.length < 5) {
+      toast.error("Address too short");
+      return false;
+    }
 
-setCartCount(count);
+    if (shippingAddress.city.length < 2) {
+      toast.error("Enter valid city");
+      return false;
+    }
+
+    if (shippingAddress.state.length < 2) {
+      toast.error("Enter valid state");
+      return false;
+    }
+
+    if (!pincodeRegex.test(shippingAddress.pincode)) {
+      toast.error("Enter valid 6 digit pincode");
+      return false;
+    }
+
+    return true;
+  };
+
+  const updateQuantity = async (itemId: string, action: "inc" | "dec") => {
+    const res = await axios.put(
+      `${BASE_URL}api/user/cart/update-quantity`,
+      { itemId, action },
+      { withCredentials: true },
+    );
+
+    setCartItems(res.data.items);
+    setCartTotal(res.data.cartTotal);
+
+    const count = res.data.items.reduce(
+      (acc: number, item: any) => acc + item.quantity,
+      0,
+    );
+
+    setCartCount(count);
+  };
+
+  const removeItem = async (itemId: string) => {
+    const res = await axios.delete(`${BASE_URL}api/user/cart/remove-item`, {
+      data: { itemId },
+      withCredentials: true,
+    });
+
+    setCartItems(res.data.items);
+    setCartTotal(res.data.cartTotal);
+
+    const count = res.data.items.reduce(
+      (acc: number, item: any) => acc + item.quantity,
+      0,
+    );
+
+    setCartCount(count);
+  };
+
+  const handlePlaceOrder = async () => {
+    if (cartItems.length === 0) {
+      toast.error("Cart is empty");
+      navigate("/collections");
+      return;
+    }
+
+    if (!validateForm()) return;
+
+    try {
+      const orderItems = cartItems.map((item: any) => ({
+        product: item.product._id,
+        quantity: item.quantity,
+      }));
+
+      const res = await axios.post(
+        `${BASE_URL}api/order/create`,
+        {
+          items: orderItems,
+          shippingAddress,
+        },
+        { withCredentials: true },
+      );
+
+      const { order, razorpayOrder } = res.data;
+      openRazorpayCheckout(order, razorpayOrder);
+    } catch {
+      toast.error("Order failed");
+    }
+  };
+
+  const openRazorpayCheckout = (order: any, razorpayOrder: any) => {
+    const options = {
+      key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+      amount: razorpayOrder.amount,
+      currency: "INR",
+      name: "Ishwar Rugs",
+      order_id: razorpayOrder.id,
+
+      handler: async function (response: any) {
+        await axios.post(
+          `${BASE_URL}api/payment/verify`,
+          {
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_signature: response.razorpay_signature,
+            orderId: order._id,
+          },
+          { withCredentials: true },
+        );
+
+        // ✅ CLEAR FRONTEND CART STATE
+        setCartItems([]);
+        setCartTotal(0);
+        setCartCount(0);
+
+        toast.success("Payment Successful");
+
+        navigate("/orders");
+      },
     };
 
-
+    const rzp = new (window as any).Razorpay(options);
+    rzp.open();
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-black text-black dark:text-white transition-colors">
-      
-      <div className="max-w-7xl mx-auto px-4 py-10 my-20">
-        
-        <h1 className="text-4xl font-bold text-premium-gold mb-8 text-center">
-          Your Cart
-        </h1>
-        <div className="grid lg:grid-cols-3 gap-8">
-          
-          <div className="lg:col-span-2 space-y-6">
-            {cartItems.length === 0 && (
-              <p className="text-gray-500">
-                Your cart is empty
-              </p>
-            )}
+    <div className="min-h-screen bg-background text-foreground pt-32 pb-20">
+      <div className="max-w-7xl mx-auto px-4 grid lg:grid-cols-3 gap-10">
+        {/* LEFT SIDE */}
+        <div className="lg:col-span-2 space-y-6">
+          {cartItems.length === 0 && (
+            <p className="text-muted-foreground">Your cart is empty</p>
+          )}
 
-            {cartItems.map((item: any) => (
+          {cartItems.map((item: any) => (
             <Link key={item._id} href={`/product/${item.product.slug}`}>
-            <div
-              key={item._id}
-              className="
-                group flex flex-row mb-6 items-start gap-4 sm:gap-6
-                rounded-2xl p-5
-                bg-white dark:bg-black border
-                shadow-sm
-                transition-all duration-300 ease-in-out
-                hover:shadow-xl hover:-translate-y-1
-                hover:border-gray-300 dark:hover:border-gray-800">
+              <div className="group flex gap-6 p-6 rounded-2xl border bg-card hover:shadow-lg transition">
+                <img
+                  src={`${BASE_URL}${item.product?.thumbnail}`}
+                  className="w-28 h-28 object-cover rounded-xl"
+                />
 
-    
-    <div className="overflow-hidden rounded-xl">
-      <img
-        src={`${BASE_URL}${item.product?.thumbnail}`}
-        alt={item.product?.title}
-        className="
-           w-24 h-24
-  sm:w-32 sm:h-32
-  object-cover
-  flex-shrink-0
-  transition-transform duration-300
-  group-hover:scale-110
-        "
-      />
-    </div>
+                <div className="flex-1">
+                  <h2 className="text-lg font-semibold">
+                    {item.product?.title}
+                  </h2>
 
-  
-    <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-3 mt-4">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        updateQuantity(item._id, "dec");
+                      }}
+                      className="w-8 h-8 border rounded-lg"
+                    >
+                      -
+                    </button>
 
-      <h2 className="font-medium text-lg">
-        {item.product?.title}
-      </h2>
+                    <span>{item.quantity}</span>
 
-      <p className="text-gray-500 text-sm mt-1">
-        {item.product?.category?.name} | {item.product?.style}
-      </p>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        updateQuantity(item._id, "inc");
+                      }}
+                      className="w-8 h-8 border rounded-lg"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
 
-      
-      <div className="flex items-center gap-3 mt-4">
+                <div className="text-right">
+                  <p className="font-semibold">₹{item.price}</p>
+                  <p className="text-sm text-muted-foreground">
+                    Total: ₹{item.total}
+                  </p>
 
-        <button onClick={(e) =>{ e.stopPropagation();
-                  e.preventDefault();  updateQuantity(item._id, "dec")}
-          
-        } className="w-8 h-8 border rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
-          -
-        </button>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      removeItem(item._id);
+                    }}
+                    className="text-red-500 text-sm mt-3"
+                  >
+                    Remove
+                  </button>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
 
-        <span>{item.quantity}</span>
+        {/* RIGHT SIDE */}
+        <div className="p-8 rounded-2xl border bg-card space-y-6 h-fit sticky top-32">
+          <h2 className="text-xl font-semibold">Shipping Address</h2>
 
-        <button onClick={(e) =>
-          { e.stopPropagation();
-                  e.preventDefault();  updateQuantity(item._id, "inc")}
-        }
-        className="w-8 h-8 border rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
-          +
-        </button>
+          {["fullName", "phone", "addressLine", "city", "state", "pincode"].map(
+            (field) => (
+              <input
+                key={field}
+                name={field}
+                placeholder={field.replace(/([A-Z])/g, " $1")}
+                onChange={handleAddressChange}
+                className="w-full border p-3 rounded-lg bg-background"
+              />
+            ),
+          )}
 
-      </div>
+          <div className="border-t pt-4 space-y-4">
+            <div className="flex justify-between">
+              <span>Total</span>
+              <span className="font-bold">₹{cartTotal}</span>
+            </div>
 
-    </div>
-
-    <div className="flex flex-col items-end justify-between
-min-w-[90px] sm:min-w-[120px]
-">
-
-      {/* Price */}
-      <p className="font-semibold text-lg">
-        ₹{item.price}
-      </p>
-
-      {/* Item Total */}
-      <p className="text-sm text-gray-500">
-        Total: ₹{item.total}
-      </p>
-
-      {/* Remove */}
-      <button
-      onClick={(e) => {  e.stopPropagation();
-                  e.preventDefault();  removeItem(item._id)}}
-        className="
-          flex items-center gap-1
-          text-sm font-medium
-          text-red-500
-          px-3 py-1.5
-          rounded-lg
-          transition-all duration-200
-
-          hover:bg-red-50
-          hover:text-red-600
-
-          dark:hover:bg-red-900/20
-        "
-      >
-        🗑 Remove
-      </button>
-
-
-    </div>
-
-  </div>
-  </Link>
-))}
-
+            <button
+              onClick={handlePlaceOrder}
+              className="w-full py-3 rounded-xl bg-black text-white dark:bg-white dark:text-black transition"
+            >
+              Proceed to Payment
+            </button>
           </div>
-
-          <div
-  className="
-    border border-gray-200 dark:border-gray-800
-    rounded-2xl
-    p-8
-    h-fit
-
-    bg-white dark:bg-[#0a0a0a]
-
-    shadow-sm
-    hover:shadow-lg
-    transition
-  "
->
-
-  <h2 className="text-2xl font-semibold mb-8 tracking-wide">
-    Order Summary
-  </h2>
-
-  <div className="flex justify-between text-sm mb-4">
-    <span className="text-gray-600 dark:text-gray-400">
-      Subtotal
-    </span>
-    <span className="font-medium">
-      ₹{cartTotal}
-    </span>
-  </div>
-
-  <div className="flex justify-between text-sm mb-4">
-    <span className="text-gray-600 dark:text-gray-400">
-      Shipping
-    </span>
-    <span className="text-green-600 font-medium">
-      Free
-    </span>
-  </div>
-
-  <div className="border-t border-dashed border-gray-300 dark:border-gray-700 my-6"></div>
-
-  <div className="flex justify-between items-center mb-8">
-
-    <span className="text-lg font-semibold">
-      Total
-    </span>
-
-    <span className="text-2xl font-bold text-premium-gold">
-      ₹{cartTotal}
-    </span>
-
-  </div>
-
-  <button
-    className="
-      w-full
-      py-4
-      rounded-xl
-
-      bg-black
-      text-white
-
-      dark:bg-white
-      dark:text-black
-
-      font-medium
-      tracking-wide
-
-      hover:opacity-90
-      hover:scale-[1.01]
-
-      transition-all duration-200
-    "
-  >
-    Proceed to Checkout
-  </button>
-
-  <p className="text-xs text-gray-500 text-center mt-4">
-    🔒 Secure Checkout • SSL Encrypted
-  </p>
-
-</div>
-
-
         </div>
       </div>
     </div>

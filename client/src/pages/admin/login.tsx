@@ -14,19 +14,24 @@ export default function AdminLogin() {
     e.preventDefault();
 
     try {
-      const res = await fetch("http://localhost:3000/api/admin/login", {
+      const res = await fetch("http://localhost:5000/api/admin/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        credentials: "include", // 🔥 VERY IMPORTANT (cookie ke liye)
+        credentials: "include", // cookie ke liye
         body: JSON.stringify({ email, password }),
       });
 
       const data = await res.json();
 
       if (data.success) {
+        // ✅ Admin ka name store karo
+        localStorage.setItem("adminName", data.adminName);
+        
         toast({ title: "Login Successful" });
+
+        // redirect
         window.location.href = "/admin/dashboard";
       } else {
         toast({

@@ -93,6 +93,7 @@ export const adminLogin = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "Admin Logged In",
+      adminName: existingAdmin.username,
       token
     });
   } catch (error) {

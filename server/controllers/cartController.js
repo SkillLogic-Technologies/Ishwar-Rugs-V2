@@ -6,57 +6,80 @@ async function addToCart(req, res) {
     if (!req.identity) {
       return res.status(401).json({ success: false, message: "Identity not found" });
     }
-    const { productId } = req.params
-    const { quantity = 1 } = req.body;
-    const product = await Product.findById(productId)
 
+    const { productId } = req.params;
+    const { quantity = 1 } = req.body;
+
+    const product = await Product.findById(productId);
     if (!product) {
       return res.status(404).json({ success: false, message: "Product not found" });
     }
 
-    let filter = {};
+    let cart;
 
+    // 🔥 IF USER LOGGED IN
     if (req.identity.type === "user") {
-      filter.user = req.identity.id;
+
+      // 1️⃣ Check if guest cart exists
+      const guestCart = await Cart.findOne({ guestId: req.identity.guestId });
+
+      if (guestCart) {
+        // Convert guest cart to user cart
+        guestCart.user = req.identity.id;
+        guestCart.guestId = null;
+        await guestCart.save();
+      }
+
+      cart = await Cart.findOne({ user: req.identity.id });
+
+      if (!cart) {
+        cart = await Cart.create({
+          user: req.identity.id,
+          items: [],
+          cartTotal: 0,
+        });
+      }
+
     } else {
-      filter.guestId = req.identity.id;
+      // 🔥 GUEST FLOW
+      cart = await Cart.findOne({ guestId: req.identity.id });
+
+      if (!cart) {
+        cart = await Cart.create({
+          guestId: req.identity.id,
+          items: [],
+          cartTotal: 0,
+        });
+      }
     }
 
-    let cart = await Cart.findOne(filter);
-    if (!cart) {
-      const itemTotal = product.price * quantity;
-      cart = await Cart.create({
-        user: req.identity.type === "user" ? req.identity.id : null,
-        guestId: req.identity.type === "guest" ? req.identity.id : null,
-        items: [{ product: productId, quantity, price: product.price, total: itemTotal }],
-        cartTotal: itemTotal,
-      });
-      return res.status(201).json({
-        success: true, message: "Added to cart", items: cart.items,
-        cartTotal: cart.cartTotal
-      });
-    }
-
+    // 🔥 ADD PRODUCT LOGIC
     const itemIndex = cart.items.findIndex(
       (item) => item.product.toString() === productId
     );
 
     if (itemIndex > -1) {
       cart.items[itemIndex].quantity += quantity;
-      cart.items[itemIndex].total = cart.items[itemIndex].quantity * cart.items[itemIndex].price;
+      cart.items[itemIndex].total =
+        cart.items[itemIndex].quantity * cart.items[itemIndex].price;
     } else {
-      cart.items.push({ product: productId, quantity, price: product.price, total: product.price * quantity });
+      cart.items.push({
+        product: productId,
+        quantity,
+        price: product.price,
+        total: product.price * quantity,
+      });
     }
 
-    cart.cartTotal = cart.items.reduce(
-      (acc, item) => acc + item.total,
-      0
-    );
+    cart.cartTotal = cart.items.reduce((acc, item) => acc + item.total, 0);
+
     await cart.save();
 
     res.status(200).json({
-      success: true, message: "Added to cart", items: cart.items,
-      cartTotal: cart.cartTotal
+      success: true,
+      message: "Added to cart",
+      items: cart.items,
+      cartTotal: cart.cartTotal,
     });
 
   } catch (error) {

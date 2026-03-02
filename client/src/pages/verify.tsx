@@ -20,18 +20,17 @@ export default function Verify() {
       return;
     }
 
-   const parsed = JSON.parse(storedUser);
-      setEmail(parsed.email);
+    const parsed = JSON.parse(storedUser);
+    setEmail(parsed.email);
   }, [location]);
 
   const handleVerify = async () => {
-
     if (!username) {
-    setSuccess(false);
-    setMessage("Please enter username");
-    return;
-  }
-  
+      setSuccess(false);
+      setMessage("Please enter username");
+      return;
+    }
+
     if (!otp) {
       setSuccess(false);
       setMessage("Please enter OTP");
@@ -42,14 +41,12 @@ export default function Verify() {
       setLoading(true);
       setMessage("");
 
-      const res = await fetch(
-        "http://localhost:5000/api/users/verify-otp",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ username, email, otp }),
-        }
-      );
+      const res = await fetch("http://localhost:5000/api/users/verify-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ username, email, otp }),
+      });
 
       const data = await res.json();
 
@@ -60,11 +57,10 @@ export default function Verify() {
         //  Save token
         localStorage.setItem("token", data.token);
 
-
-          // USER SAVE (VERY IMPORTANT) 
+        // USER SAVE (VERY IMPORTANT)
         sessionStorage.setItem("verifiedUser", JSON.stringify(data.user));
 
-        //  NAVBAR KO SIGNAL 
+        //  NAVBAR KO SIGNAL
         window.dispatchEvent(new Event("userVerified"));
 
         //  Clear temp data
@@ -89,10 +85,7 @@ export default function Verify() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 to-black">
       <div className="backdrop-blur-xl bg-white/10 border border-white/20 shadow-2xl rounded-2xl w-[420px] p-10 text-white">
-
-        <h2 className="text-3xl font-semibold text-center mb-8">
-          Verify OTP
-        </h2>
+        <h2 className="text-3xl font-semibold text-center mb-8">Verify OTP</h2>
 
         {message && (
           <div
@@ -106,13 +99,13 @@ export default function Verify() {
           </div>
         )}
 
-       <input
-  type="text"
-  placeholder="Enter Username"
-  value={username}
-  onChange={(e) => setUsername(e.target.value)}
-  className="w-full mb-5 px-4 py-3 rounded-lg bg-black/40 border border-gray-600 focus:border-yellow-500 outline-none"
-/>
+        <input
+          type="text"
+          placeholder="Enter Username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          className="w-full mb-5 px-4 py-3 rounded-lg bg-black/40 border border-gray-600 focus:border-yellow-500 outline-none"
+        />
 
         <input
           type="email"
@@ -136,7 +129,6 @@ export default function Verify() {
         >
           {loading ? "Verifying..." : "Verify OTP"}
         </button>
-
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 "use client";
 
 import { Search, User, Sun, Moon, Menu } from "lucide-react";
-import logo from '../../../public/logo/Logo.png'
+import logo from "../../../public/logo/Logo.png";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/components/theme-provider";
 import { Link, useNavigate } from "react-router-dom";
@@ -11,6 +11,9 @@ export default function AdminNavbar({ setIsOpen }) {
   const { theme, setTheme } = useTheme();
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
+  const adminName = localStorage.getItem("adminName") || "";
+  const firstLetter = adminName.charAt(0).toUpperCase();
+
   return (
     <div
       className="
@@ -40,12 +43,10 @@ export default function AdminNavbar({ setIsOpen }) {
               navigate(`/admin/products?title=${search}`);
             }
           }}
-          className=" rounded-l-md px-2 md:px-4 w-[80%] h-full outline-none"
+          className="rounded-l-md px-2 md:px-4 w-[80%] h-full outline-none text-black"
         />
         <button
-          onClick={() =>
-            navigate(`/admin/products?title=${search}`)
-          }
+          onClick={() => navigate(`/admin/products?title=${search}`)}
           className="
           bg-warm-gold px-4 py-3 text-white flex items-center
           hover:opacity-90 transition rounded-r-md
@@ -53,8 +54,6 @@ export default function AdminNavbar({ setIsOpen }) {
         >
           <Search size={18} />
         </button>
-
-
       </div>
 
       <div className="flex  items-center">
@@ -84,17 +83,21 @@ export default function AdminNavbar({ setIsOpen }) {
         md:bg-warm-gold md:text-white
       "
         >
-          <div className="w-8 h-8 md:bg-white bg-warm-gold rounded-full text-black flex items-center justify-center">A</div>
+          <div className="w-8 h-8 md:bg-white bg-warm-gold rounded-full text-black flex items-center justify-center">
+            {firstLetter}
+          </div>
 
           <span className="md:text-sm md:font-medium hidden md:block">
-            Angelina Deo
+            {adminName}
           </span>
         </div>
       </div>
-      <button className="bg-warm-gold md:hidden  text-white p-2 rounded shadow" onClick={() => setIsOpen(true)}>
+      <button
+        className="bg-warm-gold md:hidden  text-white p-2 rounded shadow"
+        onClick={() => setIsOpen(true)}
+      >
         <Menu size={20} />
       </button>
     </div>
   );
-
 }

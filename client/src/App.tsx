@@ -28,6 +28,7 @@ import Stories from "@/pages/stories";
 import NotFound from "@/pages/not-found";
 import WishlistPage from "./pages/WishlistPage";
 import CartPage from "./pages/CartPage";
+import OrdersPage from "./pages/OrdersPage";
 import Verify from "@/pages/verify";
 
 // Admin pages
@@ -100,6 +101,7 @@ function Router() {
           <Route path="/about" component={About} />
           <Route path="/contact" component={Contact} />
           <Route path="/stories" component={Stories} />
+          <Route path="/orders" component={OrdersPage} />
           <Route path="/verify" component={Verify} />
 
           <Route path="/collections/:slug" component={CollectionDetail} />
