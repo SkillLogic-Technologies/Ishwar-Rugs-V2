@@ -32,9 +32,10 @@ export default function ModernNavigation() {
   const { theme, setTheme } = useTheme();
   const { wishlistCount } = useWishlist();
   const { cartCount, setCartCount } = useCart(); // ✅ FIXED
+  const [token, setToken] = useState(localStorage.getItem("token"));
 
   const [location, navigate] = useLocation();
-  const token = localStorage.getItem("token");
+  
   const isVerifyPage = location === "/verify";
 
   type VerifiedUser = {
@@ -47,19 +48,19 @@ export default function ModernNavigation() {
 
   // ✅ Load verified user
   useEffect(() => {
-    const loadUser = () => {
-      const user = sessionStorage.getItem("verifiedUser");
-      setVerifiedUser(user ? JSON.parse(user) : null);
-    };
+  const loadUser = () => {
+    const user = localStorage.getItem("verifiedUser");
+    setVerifiedUser(user ? JSON.parse(user) : null);
+  };
 
-    loadUser();
-    window.addEventListener("userVerified", loadUser);
+  loadUser();
 
-    return () => {
-      window.removeEventListener("userVerified", loadUser);
-    };
-  }, []);
+  window.addEventListener("userVerified", loadUser);
 
+  return () => {
+    window.removeEventListener("userVerified", loadUser);
+  };
+}, []);
   // ✅ CART AUTO SYNC (page change + payment success)
   useEffect(() => {
     const refreshCart = async () => {
@@ -91,22 +92,24 @@ export default function ModernNavigation() {
     };
   }, [location]);
 
-  const handleLogout = async () => {
-    try {
-      await fetch("http://127.0.0.1:5000/api/users/logout", {
-        method: "POST",
-        credentials: "include",
-      });
-    } catch (err) {
-      console.error("Logout error", err);
-    }
+ const handleLogout = async () => {
+  try {
+    await fetch("http://127.0.0.1:5000/api/users/logout", {
+      method: "POST",
+      credentials: "include",
+    });
+  } catch (err) {
+    console.error("Logout error", err);
+  }
 
-    localStorage.removeItem("token");
-    sessionStorage.removeItem("verifiedUser");
-    setVerifiedUser(null);
+ localStorage.removeItem("token");
+localStorage.removeItem("verifiedUser");
 
-    navigate("/");
-  };
+setVerifiedUser(null);
+setToken(null);
+
+navigate("/");
+};
 
   return (
     <nav className="fixed w-full top-0 z-50 glass-effect border-b border-white/10">
@@ -199,7 +202,7 @@ export default function ModernNavigation() {
                 )}
               </Button>
 
-              <div className="absolute right-0 mt-3 w-44 bg-white dark:bg-black border shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition">
+              <div className="absolute right-0 top-full  w-44 bg-white dark:bg-black border shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition">
 
                 {!isVerifyPage && token && (
                   <>

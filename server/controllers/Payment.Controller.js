@@ -13,20 +13,12 @@ export const verifyRazorpayPayment = async (req, res) => {
       orderId,
     } = req.body;
 
-    // 🛑 Validation
-    if (
-      !razorpay_order_id ||
-      !razorpay_payment_id ||
-      !razorpay_signature ||
-      !orderId
-    ) {
-      return res.status(400).json({
-        success: false,
-        message: "Missing payment details",
-      });
+    const order = await Order.findById(orderId);
+
+    if (!order) {
+      return res.status(404).json({ success: false, message: "Order not found" });
     }
 
-    // 🔐 Verify Razorpay Signature
     const body = razorpay_order_id + "|" + razorpay_payment_id;
 
     const expectedSignature = crypto
@@ -35,43 +27,13 @@ export const verifyRazorpayPayment = async (req, res) => {
       .digest("hex");
 
     if (expectedSignature !== razorpay_signature) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid payment signature",
-      });
+      return res.status(400).json({ success: false, message: "Invalid payment signature" });
     }
 
-    // 🔎 Find Order
-    const order = await Order.findById(orderId);
-
-    if (!order) {
-      return res.status(404).json({
-        success: false,
-        message: "Order not found",
-      });
-    }
-
-    // 🛑 Already Paid
     if (order.payment) {
-      return res.json({
-        success: true,
-        message: "Payment already processed",
-      });
+      return res.json({ success: true });
     }
 
-    // 🛑 Duplicate Transaction Check
-    const existingPayment = await Payment.findOne({
-      transactionId: razorpay_payment_id,
-    });
-
-    if (existingPayment) {
-      return res.json({
-        success: true,
-        message: "Payment already recorded",
-      });
-    }
-
-    // 💾 Save Payment
     const payment = await Payment.create({
       order: order._id,
       amount: order.totalAmount,
@@ -80,7 +42,6 @@ export const verifyRazorpayPayment = async (req, res) => {
       status: "success",
     });
 
-    // 🔻 Reduce Product Stock
     for (let item of order.items) {
       await Product.updateOne(
         { _id: item.product },
@@ -88,24 +49,27 @@ export const verifyRazorpayPayment = async (req, res) => {
       );
     }
 
-    // 🔄 Update Order
     order.payment = payment._id;
     order.orderStatus = "Processing";
     await order.save();
 
-    // 🛒 ✅ CLEAR CART USING ORDER.USER
-    await Cart.deleteOne({ user: order.user });
+    // 🔥 DELETE BOTH POSSIBILITIES
+    await Cart.deleteMany({
+      $or: [
+        { user: order.user },
+        { guestId: req.cookies?.guestId }
+      ]
+    });
+
+    res.clearCookie("guestId");
 
     return res.json({
       success: true,
-      message: "Payment verified & cart cleared successfully",
+      message: "Payment verified & cart deleted",
     });
 
   } catch (error) {
-    console.error("Payment Verify Error:", error);
-    return res.status(500).json({
-      success: false,
-      message: error.message,
-    });
+    console.error(error);
+    return res.status(500).json({ success: false });
   }
 };

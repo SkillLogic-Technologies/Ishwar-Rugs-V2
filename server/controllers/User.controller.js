@@ -2,6 +2,7 @@ import Otp from '../models/Otp.model.js';
 import sendOtp from '../utils/Otp.util.js';
 import User from '../models/User.model.js'
 import jwt from 'jsonwebtoken'
+import Cart from "../models/Cart.js";
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -55,7 +56,6 @@ export const verifyLoginOtp = async (req, res) => {
     const email = req.body.email?.toLowerCase().trim();
     const { username, otp } = req.body;
 
-    // Basic validation
     if (!email || !otp || !username) {
       return res.status(400).json({
         success: false,
@@ -70,7 +70,6 @@ export const verifyLoginOtp = async (req, res) => {
       });
     }
 
-    // Find OTP
     const existingOtp = await Otp.findOne({ email, otp });
 
     if (!existingOtp) {
@@ -80,7 +79,6 @@ export const verifyLoginOtp = async (req, res) => {
       });
     }
 
-    // Check expiry
     if (existingOtp.expiresAt < new Date()) {
       await existingOtp.deleteOne();
       return res.status(400).json({
@@ -89,7 +87,7 @@ export const verifyLoginOtp = async (req, res) => {
       });
     }
 
-    // Find or Create User
+    // 🔥 Find or Create User
     let user = await User.findOne({ email });
 
     if (!user) {
@@ -100,7 +98,55 @@ export const verifyLoginOtp = async (req, res) => {
       });
     }
 
-    // Generate JWT
+    // 🔥 CART MERGE LOGIC START
+    const guestId = req.cookies?.guestId;
+
+    if (guestId) {
+      const guestCart = await Cart.findOne({ guestId });
+
+      if (guestCart) {
+        let userCart = await Cart.findOne({ user: user._id });
+
+        if (userCart) {
+          // 🔥 MERGE ITEMS
+          guestCart.items.forEach((guestItem) => {
+            const existingIndex = userCart.items.findIndex(
+              (item) =>
+                item.product.toString() === guestItem.product.toString()
+            );
+
+            if (existingIndex > -1) {
+              userCart.items[existingIndex].quantity += guestItem.quantity;
+              userCart.items[existingIndex].total =
+                userCart.items[existingIndex].quantity *
+                userCart.items[existingIndex].price;
+            } else {
+              userCart.items.push(guestItem);
+            }
+          });
+
+          userCart.cartTotal = userCart.items.reduce(
+            (acc, item) => acc + item.total,
+            0
+          );
+
+          await userCart.save();
+          await guestCart.deleteOne();
+
+        } else {
+          // Convert guest cart to user cart
+          guestCart.user = user._id;
+          guestCart.guestId = null;
+          await guestCart.save();
+        }
+      }
+
+      // Clear guest cookie after merge
+      res.clearCookie("guestId");
+    }
+    // 🔥 CART MERGE LOGIC END
+
+    // 🔥 Generate JWT
     const token = jwt.sign(
       {
         userId: user._id,
@@ -110,15 +156,14 @@ export const verifyLoginOtp = async (req, res) => {
       { expiresIn: "3d" }
     );
 
-    // Set cookie
+    // 🔥 Set user cookie
     res.cookie("userToken", token, {
       httpOnly: true,
       secure: false,
-      sameSite:  "lax",
+      sameSite: "lax",
       maxAge: 3 * 24 * 60 * 60 * 1000,
     });
 
-    // Delete OTP after successful verification
     await existingOtp.deleteOne();
 
     return res.status(200).json({
@@ -127,6 +172,7 @@ export const verifyLoginOtp = async (req, res) => {
       user,
       token,
     });
+
   } catch (error) {
     console.error("Verify OTP Error:", error);
     return res.status(500).json({
@@ -135,6 +181,8 @@ export const verifyLoginOtp = async (req, res) => {
     });
   }
 };
+
+
 export const myProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user._id);

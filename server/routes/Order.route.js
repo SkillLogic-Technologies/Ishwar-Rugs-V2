@@ -9,6 +9,6 @@ router.post("/create", isAuth, createOrder);
 router.get("/my-orders", isAuth, getMyOrders);
 router.get("/all",isAdmin, getAllOrders);
 router.put("/admin/order/:id/status", isAdmin, updateOrderStatus);
-router.put("/order/:id/cancel", isAuth, cancelOrder);
+router.put("/:id/cancel", isAuth, cancelOrder);
 
 export default router;

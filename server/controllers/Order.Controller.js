@@ -70,12 +70,12 @@ export const createOrder = async (req, res) => {
     }
 
     // 📝 Create Order
-  const order = await Order.create({
-  user: req.user._id,
-  items: orderItems,
-  totalAmount,
-  shippingAddress
-});
+      const order = await Order.create({
+      user: req.user._id,
+      items: orderItems,
+      totalAmount,
+      shippingAddress
+    });
 
     // 💳 Create Razorpay Order
     const razorpay = getRazorpayInstance();

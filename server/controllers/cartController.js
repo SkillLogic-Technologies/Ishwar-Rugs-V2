@@ -4,31 +4,28 @@ import Product from "../models/Product.js"
 async function addToCart(req, res) {
   try {
     if (!req.identity) {
-      return res.status(401).json({ success: false, message: "Identity not found" });
+      return res.status(401).json({
+        success: false,
+        message: "Identity not found",
+      });
     }
 
     const { productId } = req.params;
     const { quantity = 1 } = req.body;
 
     const product = await Product.findById(productId);
+
     if (!product) {
-      return res.status(404).json({ success: false, message: "Product not found" });
+      return res.status(404).json({
+        success: false,
+        message: "Product not found",
+      });
     }
 
     let cart;
 
-    // 🔥 IF USER LOGGED IN
+    // ✅ USER FLOW
     if (req.identity.type === "user") {
-
-      // 1️⃣ Check if guest cart exists
-      const guestCart = await Cart.findOne({ guestId: req.identity.guestId });
-
-      if (guestCart) {
-        // Convert guest cart to user cart
-        guestCart.user = req.identity.id;
-        guestCart.guestId = null;
-        await guestCart.save();
-      }
 
       cart = await Cart.findOne({ user: req.identity.id });
 
@@ -41,7 +38,8 @@ async function addToCart(req, res) {
       }
 
     } else {
-      // 🔥 GUEST FLOW
+      // ✅ GUEST FLOW
+
       cart = await Cart.findOne({ guestId: req.identity.id });
 
       if (!cart) {
@@ -53,7 +51,7 @@ async function addToCart(req, res) {
       }
     }
 
-    // 🔥 ADD PRODUCT LOGIC
+    // ✅ ADD / UPDATE PRODUCT
     const itemIndex = cart.items.findIndex(
       (item) => item.product.toString() === productId
     );
@@ -61,7 +59,8 @@ async function addToCart(req, res) {
     if (itemIndex > -1) {
       cart.items[itemIndex].quantity += quantity;
       cart.items[itemIndex].total =
-        cart.items[itemIndex].quantity * cart.items[itemIndex].price;
+        cart.items[itemIndex].quantity *
+        cart.items[itemIndex].price;
     } else {
       cart.items.push({
         product: productId,
@@ -71,11 +70,15 @@ async function addToCart(req, res) {
       });
     }
 
-    cart.cartTotal = cart.items.reduce((acc, item) => acc + item.total, 0);
+    // ✅ RECALCULATE TOTAL
+    cart.cartTotal = cart.items.reduce(
+      (acc, item) => acc + item.total,
+      0
+    );
 
     await cart.save();
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: "Added to cart",
       items: cart.items,
@@ -83,7 +86,11 @@ async function addToCart(req, res) {
     });
 
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    console.error("Add To Cart Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to add item",
+    });
   }
 }
 

@@ -58,7 +58,7 @@ export default function Verify() {
         localStorage.setItem("token", data.token);
 
         // USER SAVE (VERY IMPORTANT)
-        sessionStorage.setItem("verifiedUser", JSON.stringify(data.user));
+        localStorage.setItem("verifiedUser", JSON.stringify(data.user));
 
         //  NAVBAR KO SIGNAL
         window.dispatchEvent(new Event("userVerified"));

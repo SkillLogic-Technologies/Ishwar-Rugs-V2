@@ -150,20 +150,22 @@ const CartPage = () => {
       const { order, razorpayOrder } = res.data;
       openRazorpayCheckout(order, razorpayOrder);
     } catch {
-      toast.error("Order failed");
+      toast.error("Please log in to continue with your order.");
+
     }
   };
 
-  const openRazorpayCheckout = (order: any, razorpayOrder: any) => {
-    const options = {
-      key: import.meta.env.VITE_RAZORPAY_KEY_ID,
-      amount: razorpayOrder.amount,
-      currency: "INR",
-      name: "Ishwar Rugs",
-      order_id: razorpayOrder.id,
+const openRazorpayCheckout = (order: any, razorpayOrder: any) => {
+  const options = {
+    key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+    amount: razorpayOrder.amount,
+    currency: "INR",
+    name: "Ishwar Rugs",
+    order_id: razorpayOrder.id,
 
-      handler: async function (response: any) {
-        await axios.post(
+    handler: async function (response: any) {
+      try {
+        const verifyRes = await axios.post(
           `${BASE_URL}api/payment/verify`,
           {
             razorpay_order_id: response.razorpay_order_id,
@@ -171,24 +173,39 @@ const CartPage = () => {
             razorpay_signature: response.razorpay_signature,
             orderId: order._id,
           },
-          { withCredentials: true },
+          { withCredentials: true }
         );
 
-        // ✅ CLEAR FRONTEND CART STATE
-        setCartItems([]);
-        setCartTotal(0);
-        setCartCount(0);
+        if (verifyRes.data.success) {
+          // ✅ Clear frontend cart state
+          setCartItems([]);
+          setCartTotal(0);
+          setCartCount(0);
 
-        toast.success("Payment Successful");
+          // ✅ Notify Navbar to refresh
+          window.dispatchEvent(new Event("cartUpdated"));
 
-        navigate("/orders");
-      },
-    };
+          toast.success("Payment Successful");
 
-    const rzp = new (window as any).Razorpay(options);
-    rzp.open();
+          navigate("/orders");
+        } else {
+          toast.error("Payment verification failed");
+        }
+
+      } catch (error) {
+        console.error("Payment verify error:", error);
+        toast.error("Payment verification failed");
+      }
+    },
+
+    theme: {
+      color: "#d4af37",
+    },
   };
 
+  const rzp = new (window as any).Razorpay(options);
+  rzp.open();
+};
   return (
     <div className="min-h-screen bg-background text-foreground pt-32 pb-20">
       <div className="max-w-7xl mx-auto px-4 grid lg:grid-cols-3 gap-10">
