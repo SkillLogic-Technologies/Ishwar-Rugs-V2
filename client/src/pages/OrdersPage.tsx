@@ -1,14 +1,21 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Link } from "wouter";
+import { Phone, MapPin, Truck } from "lucide-react";
 
 function OrdersPage() {
   const [orders, setOrders] = useState<any[]>([]);
   const BASE_URL = "http://localhost:5000/";
 
-  useEffect(() => {
+ useEffect(() => {
+  fetchOrders();
+
+  const interval = setInterval(() => {
     fetchOrders();
-  }, []);
+  }, 5000); // every 5 seconds
+
+  return () => clearInterval(interval);
+}, []);
 
   const fetchOrders = async () => {
     try {
@@ -135,8 +142,9 @@ function OrdersPage() {
             {/* Shipping Address */}
             <div className="mt-10">
               <div className="bg-muted/30 dark:bg-neutral-800 rounded-xl p-6 border">
-                <h3 className="font-semibold text-lg mb-4 tracking-wide">
-                  🚚 Shipping Address
+                <h3 className="font-semibold text-lg mb-4 tracking-wide flex items-center gap-2">
+                  <Truck className="w-5 h-5 text-primary" />
+                  Shipping Address
                 </h3>
 
                 <div className="space-y-1 text-sm">
@@ -149,9 +157,10 @@ function OrdersPage() {
                     {order.shippingAddress.state}
                   </p>
                   <p>{order.shippingAddress.pincode}</p>
-                  <p className="mt-2 font-medium">
-                    📞 {order.shippingAddress.phone}
-                  </p>
+                 <p className="mt-2 font-medium flex items-center gap-2">
+                  <Phone className="w-4 h-4 text-primary" />
+                  {order.shippingAddress.phone}
+                </p>
                 </div>
               </div>
             </div>
