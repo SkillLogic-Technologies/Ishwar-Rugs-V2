@@ -87,8 +87,18 @@ export default function ModernNavigation() {
             </Link>
           </div>
 
+
+
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
+            <Link
+              href="/"
+              className={`text-sm font-semibold tracking-wide transition-all duration-300 ${
+                location === "/" ? "text-premium-gold" : "text-foreground hover:text-premium-gold"
+              }`}
+            >
+              HOME
+            </Link>
             <NavigationMenu>
               <NavigationMenuList>
                 <NavigationMenuItem>
