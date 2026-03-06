@@ -32,7 +32,7 @@ export default function ModernNavigation() {
   const { theme, setTheme } = useTheme();
   const { wishlistCount } = useWishlist();
   const { cartCount, setCartCount } = useCart(); // ✅ FIXED
-  const [token, setToken] = useState(localStorage.getItem("token"));
+  // const [token, setToken] = useState(localStorage.getItem("token"));
 
   const [location, navigate] = useLocation();
   
@@ -106,7 +106,7 @@ export default function ModernNavigation() {
 localStorage.removeItem("verifiedUser");
 
 setVerifiedUser(null);
-setToken(null);
+// setToken(null);
 
 navigate("/");
 };
@@ -203,7 +203,7 @@ navigate("/");
 
               <div className="absolute right-0 top-full  w-44 bg-white dark:bg-black border shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition">
 
-                {!isVerifyPage && token && (
+                {!isVerifyPage && verifiedUser && (
                   <>
                     <button
                       onClick={() => navigate("/orders")}
@@ -221,7 +221,7 @@ navigate("/");
                   </>
                 )}
 
-                {!token && (
+                {!verifiedUser && (
                   <button
                     onClick={() => setShowLogin(true)}
                     className="block w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-800"

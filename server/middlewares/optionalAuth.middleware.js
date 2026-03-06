@@ -3,7 +3,7 @@ import User from "../models/User.model.js";
 
 export const optionalAuth = async (req, res, next) => {
   try {
-    const token = req.cookies?.token;
+    const token = req.cookies?.userToken;
 
     if (!token) {
       return next();
