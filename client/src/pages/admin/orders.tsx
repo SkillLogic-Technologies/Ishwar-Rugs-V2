@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link } from "wouter";
 import { toast } from "react-hot-toast";
+import { ShoppingBag, Truck, Phone } from "lucide-react";
 
 function AdminOrders() {
   const [orders, setOrders] = useState<any[]>([]);
@@ -59,8 +60,10 @@ function AdminOrders() {
   return (
     <div className="min-h-screen pt-28 px-8 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-black dark:to-neutral-950 text-black dark:text-white">
 
-      <h1 className="text-4xl font-bold mb-14 tracking-wide">
-        🛍 Admin Orders
+      {/* Title */}
+      <h1 className="text-4xl font-bold mb-14 tracking-wide flex items-center gap-3">
+        <ShoppingBag size={34} />
+        Admin Orders
       </h1>
 
       {orders.length === 0 && (
@@ -143,8 +146,9 @@ function AdminOrders() {
 
           {/* Shipping */}
           <div className="mt-10 border-t border-neutral-200 dark:border-neutral-800 pt-6">
-            <h3 className="font-semibold text-lg mb-4 tracking-wide">
-              🚚 Shipping Details
+            <h3 className="font-semibold text-lg mb-4 tracking-wide flex items-center gap-2">
+              <Truck size={20} />
+              Shipping Details
             </h3>
 
             <div className="text-sm space-y-1 text-gray-600 dark:text-gray-300">
@@ -154,8 +158,10 @@ function AdminOrders() {
                 {order.shippingAddress.city}, {order.shippingAddress.state}
               </p>
               <p>{order.shippingAddress.pincode}</p>
-              <p className="mt-2 font-medium">
-                📞 {order.shippingAddress.phone}
+
+              <p className="mt-2 font-medium flex items-center gap-2">
+                <Phone size={16} />
+                {order.shippingAddress.phone}
               </p>
             </div>
           </div>
@@ -178,7 +184,6 @@ function AdminOrders() {
                 <option value="Cancelled">Cancelled</option>
               </select>
 
-              {/* Custom Arrow */}
               <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-sm">
                 ▼
               </div>
