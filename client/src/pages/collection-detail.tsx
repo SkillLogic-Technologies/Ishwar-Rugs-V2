@@ -298,8 +298,11 @@ export default function CollectionDetails() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
               whileHover={{ y: -12 }}
-              className="cursor-pointer group relative rounded-2xl overflow-hidden bg-neutral-950 border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.6)]"
-            >
+              className="cursor-pointer group relative rounded-2xl overflow-hidden 
+              bg-white dark:bg-neutral-950 
+              border border-gray-200 dark:border-white/10 
+              shadow-lg"         
+                 >
 
               <div className="relative overflow-hidden">
                 <img
@@ -310,11 +313,11 @@ export default function CollectionDetails() {
               </div>
 
               <div className="p-6 text-center">
-                <h2 className="text-xl font-semibold mb-2">
+                <h2 className="text-xl font-semibold mb-2 text-gray-900 dark:text-white">
                   {product.title}
                 </h2>
 
-                <p className="text-lg font-bold text-yellow-400">
+               <p className="text-lg font-bold text-yellow-600 dark:text-yellow-400">
                   ₹ {product.price}
                 </p>
               </div>
