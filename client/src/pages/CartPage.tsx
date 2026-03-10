@@ -4,6 +4,8 @@ import { toast } from "react-hot-toast";
 import { useCart } from "../context/CartContext";
 import { Link } from "wouter";
 import { useLocation } from "wouter";
+import Login from "./login";
+import Verify from "./verify";
 
 const CartPage = () => {
   const [cartItems, setCartItems] = useState<any[]>([]);
@@ -21,6 +23,32 @@ const CartPage = () => {
     state: "",
     pincode: "",
   });
+
+  const [showAuthFlow, setShowAuthFlow] = useState(false);
+  const [currentStep, setCurrentStep] = useState<"login" | "verify">("login");
+  const [isAuthCompleted, setIsAuthCompleted] = useState(false);
+
+  type VerifiedUser = {
+    username: string;
+    email?: string;
+  };
+
+  const [verifiedUser, setVerifiedUser] = useState<VerifiedUser | null>(null);
+
+  useEffect(() => {
+    const loadUser = () => {
+      const user = localStorage.getItem("verifiedUser");
+      setVerifiedUser(user ? JSON.parse(user) : null);
+    };
+
+    loadUser();
+
+    window.addEventListener("userVerified", loadUser);
+
+    return () => {
+      window.removeEventListener("userVerified", loadUser);
+    };
+  }, []);
 
   useEffect(() => {
     fetchCartItems();
@@ -132,6 +160,13 @@ const CartPage = () => {
 
     if (!validateForm()) return;
 
+    if (!verifiedUser && !isAuthCompleted) {
+      setShowAuthFlow(true);
+      setCurrentStep("login");
+      setIsAuthCompleted(false);
+      return;
+    }
+
     try {
       const orderItems = cartItems.map((item: any) => ({
         product: item.product._id,
@@ -148,64 +183,64 @@ const CartPage = () => {
       );
 
       const { order, razorpayOrder } = res.data;
+      setIsAuthCompleted(false);
+      setShowAuthFlow(false);
       openRazorpayCheckout(order, razorpayOrder);
     } catch {
-      toast.error("Please log in to continue with your order.");
-
+      toast.error("Failed to place order. Please try again.");
     }
   };
 
-const openRazorpayCheckout = (order: any, razorpayOrder: any) => {
-  const options = {
-    key: import.meta.env.VITE_RAZORPAY_KEY_ID,
-    amount: razorpayOrder.amount,
-    currency: "INR",
-    name: "Ishwar Rugs",
-    order_id: razorpayOrder.id,
+  const openRazorpayCheckout = (order: any, razorpayOrder: any) => {
+    const options = {
+      key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+      amount: razorpayOrder.amount,
+      currency: "INR",
+      name: "Ishwar Rugs",
+      order_id: razorpayOrder.id,
 
-    handler: async function (response: any) {
-      try {
-        const verifyRes = await axios.post(
-          `${BASE_URL}api/payment/verify`,
-          {
-            razorpay_order_id: response.razorpay_order_id,
-            razorpay_payment_id: response.razorpay_payment_id,
-            razorpay_signature: response.razorpay_signature,
-            orderId: order._id,
-          },
-          { withCredentials: true }
-        );
+      handler: async function (response: any) {
+        try {
+          const verifyRes = await axios.post(
+            `${BASE_URL}api/payment/verify`,
+            {
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              orderId: order._id,
+            },
+            { withCredentials: true },
+          );
 
-        if (verifyRes.data.success) {
-          // ✅ Clear frontend cart state
-          setCartItems([]);
-          setCartTotal(0);
-          setCartCount(0);
+          if (verifyRes.data.success) {
+            // ✅ Clear frontend cart state
+            setCartItems([]);
+            setCartTotal(0);
+            setCartCount(0);
 
-          // ✅ Notify Navbar to refresh
-          window.dispatchEvent(new Event("cartUpdated"));
+            // ✅ Notify Navbar to refresh
+            window.dispatchEvent(new Event("cartUpdated"));
 
-          toast.success("Payment Successful");
+            toast.success("Payment Successful");
 
-          navigate("/orders");
-        } else {
+            navigate("/orders");
+          } else {
+            toast.error("Payment verification failed");
+          }
+        } catch (error) {
+          console.error("Payment verify error:", error);
           toast.error("Payment verification failed");
         }
+      },
 
-      } catch (error) {
-        console.error("Payment verify error:", error);
-        toast.error("Payment verification failed");
-      }
-    },
+      theme: {
+        color: "#d4af37",
+      },
+    };
 
-    theme: {
-      color: "#d4af37",
-    },
+    const rzp = new (window as any).Razorpay(options);
+    rzp.open();
   };
-
-  const rzp = new (window as any).Razorpay(options);
-  rzp.open();
-};
   return (
     <div className="min-h-screen bg-background text-foreground pt-32 pb-20">
       <div className="max-w-7xl mx-auto px-4 grid lg:grid-cols-3 gap-10">
@@ -308,6 +343,38 @@ const openRazorpayCheckout = (order: any, razorpayOrder: any) => {
           </div>
         </div>
       </div>
+
+      {showAuthFlow && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="relative w-full max-w-md p-8 rounded-2xl bg-[#020617] border shadow-2xl">
+            <button
+              onClick={() => {
+                setShowAuthFlow(false);
+                setCurrentStep("login");
+                setIsAuthCompleted(false);
+              }}
+              className="absolute top-3 right-3 text-white"
+            >
+              ✖
+            </button>
+
+            {currentStep === "login" && (
+              <Login onOtpSent={() => setCurrentStep("verify")} />
+            )}
+
+            {currentStep === "verify" && (
+              <Verify
+                inline={true}
+                onVerified={() => {
+                  setIsAuthCompleted(true);
+                  setShowAuthFlow(false);
+                  setCurrentStep("login");
+                }}
+              />
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
