@@ -26,6 +26,7 @@ import {
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 export default function ModernNavigation() {
+
   const [isOpen, setIsOpen] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const [collections, setCollections] = useState<any[]>([]);
@@ -68,8 +69,8 @@ export default function ModernNavigation() {
         if (data.success) {
           const filtered = data.data.filter((c: any) =>
             ["Velura Collection", "Velura Persian", "Flowing Aura"].includes(
-              c.name,
-            ),
+              c.name
+            )
           );
           setCollections(filtered);
         }
@@ -84,15 +85,16 @@ export default function ModernNavigation() {
   useEffect(() => {
     const refreshCart = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/user/cart", {
-          withCredentials: true,
-        });
+        const res = await axios.get(
+          "http://localhost:5000/api/user/cart",
+          { withCredentials: true }
+        );
 
         const items = res.data.items || [];
 
         const count = items.reduce(
           (acc: number, item: any) => acc + item.quantity,
-          0,
+          0
         );
 
         setCartCount(count);
@@ -131,21 +133,29 @@ export default function ModernNavigation() {
 
   return (
     <nav className="fixed w-full top-0 z-50 glass-effect border-b border-white/10">
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
         <div className="flex justify-between items-center h-16 lg:h-20">
+
           {/* Logo */}
           <div className="flex items-center flex-shrink-0">
+
             <Link href="/">
+
               <img
                 src="/logo/Logo.png"
                 alt="Ishwar Rugs Logo"
                 className="h-10 sm:h-12 md:h-14 lg:h-16 w-auto object-contain"
               />
+
             </Link>
+
           </div>
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-8">
+
             <Link
               href="/"
               className={`text-sm font-semibold ${
@@ -159,59 +169,79 @@ export default function ModernNavigation() {
 
             <NavigationMenu>
               <NavigationMenuList>
+
                 <NavigationMenuItem>
+
                   <NavigationMenuTrigger className="text-sm font-semibold">
                     COLLECTIONS
                   </NavigationMenuTrigger>
 
                   <NavigationMenuContent>
+
                     <div className="w-96 p-8 glass-effect">
+
                       <h4 className="font-serif text-xl font-bold text-premium-gold mb-6">
                         Browse Collections
                       </h4>
 
                       <div className="grid gap-3">
+
                         {collections.length > 0 ? (
                           collections.map((c) => (
+
                             <NavigationMenuLink key={c._id} asChild>
+
                               <Link
                                 href={`/collections/${c.slug}`}
                                 className="block px-4 py-3 text-sm hover:text-premium-gold"
                               >
+
                                 <div className="font-semibold">{c.name}</div>
 
                                 <div className="text-xs opacity-60">
                                   {c.description}
                                 </div>
+
                               </Link>
+
                             </NavigationMenuLink>
+
                           ))
                         ) : (
                           <div>Loading...</div>
                         )}
 
                         <NavigationMenuLink asChild>
+
                           <Link
                             href="/collections"
                             className="text-premium-gold font-bold"
                           >
                             View All Collections →
                           </Link>
+
                         </NavigationMenuLink>
+
                       </div>
+
                     </div>
+
                   </NavigationMenuContent>
+
                 </NavigationMenuItem>
+
               </NavigationMenuList>
             </NavigationMenu>
 
             <Link href="/about">HERITAGE</Link>
             <Link href="/stories">STORIES</Link>
             <Link href="/contact">CONTACT</Link>
+
           </div>
 
           {/* Right Icons */}
           <div className="flex items-center space-x-3">
+
             <Button
               variant="ghost"
               size="icon"
@@ -225,38 +255,52 @@ export default function ModernNavigation() {
             </Button>
 
             <Link href="/wishlist">
+
               <Button variant="ghost" size="icon" className="relative">
+
                 <Heart />
 
                 <span className="absolute -top-1 -right-1 bg-red-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                   {wishlistCount}
                 </span>
+
               </Button>
+
             </Link>
 
             <Link href="/cart">
+
               <Button variant="ghost" size="icon" className="relative">
+
                 <ShoppingBag />
 
                 <span className="absolute -top-1 -right-1 bg-yellow-500 text-black text-xs rounded-full w-5 h-5 flex items-center justify-center">
                   {cartCount}
                 </span>
+
               </Button>
+
             </Link>
 
             {/* User */}
             <div className="relative group">
+
               <Button variant="ghost" size="icon">
+
                 {verifiedUser?.username ? (
+
                   <div className="h-8 w-8 rounded-full bg-yellow-500 text-black flex items-center justify-center font-bold">
                     {verifiedUser.username.charAt(0).toUpperCase()}
                   </div>
+
                 ) : (
                   <User />
                 )}
+
               </Button>
 
               <div className="absolute right-0 mt-3 w-44 rounded-xl bg-white dark:bg-[#1c1917] border shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all">
+
                 {!isVerifyPage && verifiedUser && (
                   <>
                     <button
@@ -283,22 +327,31 @@ export default function ModernNavigation() {
                     Login
                   </button>
                 )}
+
               </div>
+
             </div>
 
             {/* Mobile + Tablet Menu */}
             <Sheet open={isOpen} onOpenChange={setIsOpen}>
+
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="lg:hidden">
+
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="lg:hidden"
+                >
                   <Menu className="h-6 w-6" />
                 </Button>
+
               </SheetTrigger>
 
               <SheetContent side="right">
+
                 <div className="flex flex-col space-y-6 mt-8 text-lg font-semibold">
-                  <Link href="/" onClick={() => setIsOpen(false)}>
-                    HOME
-                  </Link>
+
+                  <Link href="/" onClick={() => setIsOpen(false)}>HOME</Link>
 
                   <Link href="/collections" onClick={() => setIsOpen(false)}>
                     COLLECTIONS
@@ -315,10 +368,15 @@ export default function ModernNavigation() {
                   <Link href="/contact" onClick={() => setIsOpen(false)}>
                     CONTACT
                   </Link>
+
                 </div>
+
               </SheetContent>
+
             </Sheet>
+
           </div>
+
         </div>
       </div>
 
@@ -327,10 +385,12 @@ export default function ModernNavigation() {
           className="my-24 flex items-center justify-center"
           onClick={() => setShowLogin(false)}
         >
+
           <div
             className="relative w-[90%] max-w-md p-8 rounded-2xl bg-[#020617] border shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
+
             <button
               onClick={() => setShowLogin(false)}
               className="absolute top-3 right-3 text-white"
@@ -339,9 +399,12 @@ export default function ModernNavigation() {
             </button>
 
             <Login />
+
           </div>
+
         </div>
       )}
+
     </nav>
   );
 }
