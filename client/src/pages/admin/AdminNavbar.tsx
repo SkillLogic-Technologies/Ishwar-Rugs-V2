@@ -1,11 +1,11 @@
 "use client";
 
-import { Search, User, Sun, Moon, Menu } from "lucide-react";
+import { Search, Sun, Moon, Menu } from "lucide-react";
 import logo from "../../../public/logo/Logo.png";
 import { Button } from "@/components/ui/button";
 import { useTheme } from "@/components/theme-provider";
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export default function AdminNavbar({ setIsOpen }) {
   const { theme, setTheme } = useTheme();
@@ -14,6 +14,15 @@ export default function AdminNavbar({ setIsOpen }) {
 
   const adminName = localStorage.getItem("adminName") || "";
   const firstLetter = adminName.charAt(0).toUpperCase();
+
+  // 🔐 ADMIN AUTH CHECK
+  useEffect(() => {
+    const admin = localStorage.getItem("adminName");
+
+    if (!admin) {
+      navigate("/admin/login");
+    }
+  }, [navigate]);
 
   const handleLogout = () => {
     localStorage.removeItem("adminName");
@@ -25,7 +34,7 @@ export default function AdminNavbar({ setIsOpen }) {
       className="
        h-20 fixed top-0 z-10 right-0 
       flex items-center md:justify-between 
-      px-4  shadow-md gap-3 w-full md:w-[83%]
+      px-4 shadow-md gap-3 w-full md:w-[83%]
       bg-gray-50 dark:bg-neutral-900
       border-b border-gray-200 dark:border-neutral-800
     "
@@ -51,6 +60,7 @@ export default function AdminNavbar({ setIsOpen }) {
           }}
           className="rounded-l-md px-2 md:px-4 w-[80%] h-full outline-none text-black"
         />
+
         <button
           onClick={() => navigate(`/admin/products?title=${search}`)}
           className="
@@ -125,7 +135,7 @@ export default function AdminNavbar({ setIsOpen }) {
       </div>
 
       <button
-        className="bg-warm-gold md:hidden  text-white p-2 rounded shadow"
+        className="bg-warm-gold md:hidden text-white p-2 rounded shadow"
         onClick={() => setIsOpen(true)}
       >
         <Menu size={20} />
