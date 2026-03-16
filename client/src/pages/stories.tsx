@@ -2,7 +2,7 @@
 
 export default function StoriesPage() {
   return (
-    <div className="min-h-screen pt-20">
+    <div className="min-h-screen pt-10">
       <section className="py-20 bg-gradient-to-b from-[#f3efe9] to-[#e7ded3] dark:from-[#2f2727] dark:to-[#1c1816] text-primary-brown dark:text-warm-gold">
         <div className="max-w-6xl mx-auto px-4 text-center">
           <h1 className="font-serif text-5xl md:text-7xl font-bold mb-6">

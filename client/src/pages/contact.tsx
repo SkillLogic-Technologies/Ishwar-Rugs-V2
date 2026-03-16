@@ -1,6 +1,6 @@
 "use client";
-import { motion } from "framer-motion"
-import { FormEvent } from "react"; 
+import { motion } from "framer-motion";
+import { FormEvent } from "react";
 import { useForm } from "react-hook-form";
 import {
   MapPin,
@@ -10,7 +10,7 @@ import {
   Instagram,
   Linkedin,
 } from "lucide-react";
-import axios from "axios"; 
+import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -32,7 +32,6 @@ import {
 } from "@/components/ui/select";
 
 export default function Contact() {
-  
   const form = useForm({
     defaultValues: {
       fullName: "",
@@ -44,11 +43,10 @@ export default function Contact() {
     },
   });
 
-  
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => { 
-    e.preventDefault(); 
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
-    const data = { 
+    const data = {
       fullName: form.getValues("fullName") as string,
       email: form.getValues("email") as string,
       phone: form.getValues("phone") as string,
@@ -60,39 +58,40 @@ export default function Contact() {
     try {
       const res = await axios.post(
         "http://127.0.0.1:5000/api/contact-us/",
-        data, 
+        data,
         {
-          withCredentials: true, 
-        }
+          withCredentials: true,
+        },
       );
 
-      alert("Inquiry Sent Successfully!"); 
-      form.reset(); 
+      alert("Inquiry Sent Successfully!");
+      form.reset();
     } catch (error) {
       alert("Failed to send Inquiry! Please try again.");
     }
   };
 
   return (
-    <div className="min-h-screen pt-20">
-      
+    <div className="min-h-screen pt-16">
       {/* Hero Section */}
       <motion.section
-       initial={{ opacity: 0, y: -30 }}
-  whileInView={{ opacity: 1, y: 0 }}
-  viewport={{ once: true, amount: 0.3 }}
-  transition={{ duration: 0.6, ease: "easeOut" }}
-        className="py-20 bg-gradient-to-b from-[#f3efe9] to-[#e7ded3] dark:from-[#2f2727] dark:to-[#1c1816] text-primary-brown dark:text-warm-gold transition-colors">
+        initial={{ opacity: 0, y: -30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="py-20 bg-gradient-to-b from-[#f3efe9] to-[#e7ded3] dark:from-[#2f2727] dark:to-[#1c1816] text-primary-brown dark:text-warm-gold transition-colors"
+      >
         <div className="max-w-6xl mx-auto px-4 text-center">
-          <motion.h1 
+          <motion.h1
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{
               delay: 0.3,
               duration: 0.9,
-              ease: [0.25, 0.1, 0.25, 1]
+              ease: [0.25, 0.1, 0.25, 1],
             }}
-            className="font-serif text-5xl md:text-7xl font-bold mb-6">
+            className="font-serif text-5xl md:text-7xl font-bold mb-6"
+          >
             GET IN TOUCH
           </motion.h1>
           <motion.p
@@ -101,9 +100,10 @@ export default function Contact() {
             transition={{
               delay: 0.6,
               duration: 0.9,
-              ease: [0.25, 0.1, 0.25, 1]
+              ease: [0.25, 0.1, 0.25, 1],
             }}
-            className="text-xl text-inherit opacity-80 leading-relaxed max-w-4xl mx-auto">
+            className="text-xl text-inherit opacity-80 leading-relaxed max-w-4xl mx-auto"
+          >
             Ready to transform your space with our luxury carpets? We're here to
             help you find the perfect piece or create a custom design that
             reflects your unique vision.
@@ -112,21 +112,22 @@ export default function Contact() {
       </motion.section>
 
       {/* Contact Section */}
-      <motion.section 
+      <motion.section
         initial={{ opacity: 0, scale: 0.98 }}
         whileInView={{ opacity: 1, scale: 1 }}
         viewport={{ once: true, amount: 0.2 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
-        className="py-20 bg-background text-foreground h-full">
+        className="py-20 bg-background text-foreground h-full"
+      >
         <div className="max-w-7xl mx-auto px-4 grid lg:grid-cols-2  gap-12">
-          
           {/* Contact Info */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
-            className="space-y-6">
+            className="space-y-6"
+          >
             <Card className="bg-muted text-foreground">
               <CardHeader>
                 <CardTitle className="font-serif text-3xl">
@@ -209,144 +210,143 @@ export default function Contact() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
-          
           >
-          <Card className="h-full" >
-            <CardHeader>
-              <CardTitle className="font-serif text-3xl">
-                Send Us a Message
-              </CardTitle>
-              <p className="text-muted-foreground text-sm">
-                We'd love to hear from you about collections or custom designs.
-              </p>
-            </CardHeader>
-            <CardContent>
-              <Form {...form}>
-                
-                <form
-                  onSubmit={handleSubmit}
-                  className="space-y-6"
-                >
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <FormField
-                      control={form.control}
-                      name="fullName"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Full Name *</FormLabel>
-                          <FormControl>
-                            <Input {...field} placeholder="" />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="email"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Email *</FormLabel>
-                          <FormControl>
-                            <Input {...field} placeholder="" />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <FormField
-                      control={form.control}
-                      name="phone"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Phone</FormLabel>
-                          <FormControl>
-                            <Input {...field} placeholder="+91..." />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="inquiryType"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Inquiry Type</FormLabel>
-                          <Select
-                            onValueChange={field.onChange}
-                            defaultValue={field.value}
-                          >
+            <Card className="h-full">
+              <CardHeader>
+                <CardTitle className="font-serif text-3xl">
+                  Send Us a Message
+                </CardTitle>
+                <p className="text-muted-foreground text-sm">
+                  We'd love to hear from you about collections or custom
+                  designs.
+                </p>
+              </CardHeader>
+              <CardContent>
+                <Form {...form}>
+                  <form onSubmit={handleSubmit} className="space-y-6">
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <FormField
+                        control={form.control}
+                        name="fullName"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Full Name *</FormLabel>
                             <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select type" />
-                              </SelectTrigger>
+                              <Input {...field} placeholder="" />
                             </FormControl>
-                            <SelectContent>
-                              <SelectItem value="general">
-                                General Inquiry
-                              </SelectItem>
-                              <SelectItem value="collection_inquiry">
-                                Collection Inquiry
-                              </SelectItem>
-                              <SelectItem value="custom_design">
-                                Custom Design
-                              </SelectItem>
-                            </SelectContent>
-                          </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="email"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Email *</FormLabel>
+                            <FormControl>
+                              <Input {...field} placeholder="" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <FormField
+                        control={form.control}
+                        name="phone"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Phone</FormLabel>
+                            <FormControl>
+                              <Input {...field} placeholder="+91..." />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="inquiryType"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Inquiry Type</FormLabel>
+                            <Select
+                              onValueChange={field.onChange}
+                              defaultValue={field.value}
+                            >
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select type" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="general">
+                                  General Inquiry
+                                </SelectItem>
+                                <SelectItem value="collection_inquiry">
+                                  Collection Inquiry
+                                </SelectItem>
+                                <SelectItem value="custom_design">
+                                  Custom Design
+                                </SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
+                    <FormField
+                      control={form.control}
+                      name="subject"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Subject *</FormLabel>
+                          <FormControl>
+                            <Input
+                              {...field}
+                              placeholder="Inquiry about modern rugs"
+                            />
+                          </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
-                  </div>
 
-                  <FormField
-                    control={form.control}
-                    name="subject"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Subject *</FormLabel>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            placeholder="Inquiry about modern rugs"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                    <FormField
+                      control={form.control}
+                      name="message"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Message *</FormLabel>
+                          <FormControl>
+                            <Textarea
+                              {...field}
+                              rows={6}
+                              placeholder="Tell us more..."
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-                  <FormField
-                    control={form.control}
-                    name="message"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Message *</FormLabel>
-                        <FormControl>
-                          <Textarea
-                            {...field}
-                            rows={6}
-                            placeholder="Tell us more..."
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <Button type="submit" className="w-full btn-primary text-lg py-6">
-                    SEND MESSAGE
-                  </Button>
-                </form>
-              </Form>
-            </CardContent>
-          </Card>
+                    <Button
+                      type="submit"
+                      className="w-full btn-primary text-lg py-6"
+                    >
+                      SEND MESSAGE
+                    </Button>
+                  </form>
+                </Form>
+              </CardContent>
+            </Card>
           </motion.div>
         </div>
       </motion.section>
