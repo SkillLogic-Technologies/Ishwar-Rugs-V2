@@ -1,4 +1,85 @@
-// pages/collections.tsx
+
+// import { useEffect, useState } from "react";
+// import { Link } from "wouter";
+
+// interface Collection {
+//   _id: string;
+//   name: string;
+//   description: string;
+//   image: string[]; // image array hai
+//   slug: string;
+// }
+
+// export default function CollectionsPage() {
+//   const [collections, setCollections] = useState<Collection[]>([]);
+//   const [loading, setLoading] = useState(true);
+
+//   useEffect(() => {
+//     const fetchCollections = async () => {
+//       try {
+//         const res = await fetch("http://127.0.0.1:5000/api/collection/");
+//         const data = await res.json();
+//         if (data.success) {
+//           setCollections(data.data);
+//         }
+//       } catch (err) {
+//         console.error("Error fetching collections:", err);
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+
+//     fetchCollections();
+//   }, []);
+
+//   if (loading) {
+//     return (
+//       <div className="flex justify-center items-center h-[70vh]">
+//         <p className="text-gray-500 text-lg">Loading collections...</p>
+//       </div>
+//     );
+//   }
+
+//   return (
+//     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+//       <h1 className="text-3xl font-bold text-premium-gold mb-8">
+//         All Collections
+//       </h1>
+
+//       {collections.length === 0 ? (
+//         <p className="text-gray-500">No collections available.</p>
+//       ) : (
+//         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+//           {collections.map((c) => (
+//             <Link key={c._id} href={`/collections/${c.slug}`} className="group">
+//               <div className="overflow-hidden rounded-xl shadow-lg hover:scale-105 transition-transform duration-300">
+
+//                 {/* FIRST IMAGE ONLY */}
+//                 <img
+//                   src={`http://127.0.0.1:5000/${c.image[0]}`}
+//                   alt={c.name}
+//                   className="w-full h-64 object-cover"
+//                 />
+
+//                 <div className="p-4 bg-[#020617] text-white">
+//                   <h2 className="text-lg font-semibold mb-1">{c.name}</h2>
+//                   <p className="text-sm text-gray-400">{c.description}</p>
+//                 </div>
+
+//               </div>
+//             </Link>
+//           ))}
+//         </div>
+//       )}
+//     </div>
+//   );
+// }
+
+
+
+
+
+
 import { useEffect, useState } from "react";
 import { Link } from "wouter";
 
@@ -6,7 +87,7 @@ interface Collection {
   _id: string;
   name: string;
   description: string;
-  image: string;
+  image: string | string[]; // can be string or array
   slug: string;
 }
 
@@ -41,60 +122,56 @@ export default function CollectionsPage() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12 lg:py-16">
-
-      {/* Heading */}
-      <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-premium-gold mb-8 text-center sm:text-left">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <h1 className="text-3xl font-bold text-premium-gold mb-8">
         All Collections
       </h1>
 
       {collections.length === 0 ? (
         <p className="text-gray-500">No collections available.</p>
       ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {collections.map((c) => {
+            const images = Array.isArray(c.image) ? c.image : [c.image];
 
-        <div className="grid 
-        grid-cols-1 
-        sm:grid-cols-2 
-        md:grid-cols-3 
-        lg:grid-cols-4 
-        gap-6 sm:gap-8">
+            return (
+              <Link
+                key={c._id}
+                href={`/collections/${c.slug}`}
+                className="group block" // important for grid
+              >
+                <div className="overflow-hidden rounded-xl shadow-lg hover:scale-105 transition-transform duration-300 bg-white dark:bg-gray-900 h-full">
+                  
+                  {/* Image Carousel */}
+                  <div className="relative w-full h-64">
+                    {images.map((img, idx) => (
+                      <img
+                        key={idx}
+                        src={`http://127.0.0.1:5000/${img}`}
+                        alt={c.name}
+                        className={`w-full h-64 object-cover absolute top-0 left-0 transition-opacity duration-500 ${
+                          idx === 0 ? "opacity-100" : "opacity-0"
+                        } group-hover:opacity-100`}
+                        onError={(e: any) => {
+                          e.target.src =
+                            "https://via.placeholder.com/400x400?text=No+Image";
+                        }}
+                      />
+                    ))}
+                  </div>
 
-          {collections.map((c) => (
-
-            <Link key={c._id} href={`/collections/${c.slug}`} className="group">
-
-              <div className="overflow-hidden rounded-xl shadow-lg hover:scale-105 transition-transform duration-300 bg-[#020617]">
-
-                {/* Image Container */}
-                <div className="w-full h-52 sm:h-56 md:h-60 lg:h-64 bg-white flex items-center justify-center">
-
-                  <img
-                    src={`http://127.0.0.1:5000/${c.image}`}
-                    alt={c.name}
-                    className="max-h-full max-w-full object-contain"
-                  />
+                  {/* Collection Info */}
+                  <div className="p-4 text-gray-900 dark:text-white">
+                    <h2 className="text-lg font-semibold mb-1">{c.name}</h2>
+                    <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
+                      {c.description}
+                    </p>
+                  </div>
 
                 </div>
-
-                {/* Content */}
-                <div className="p-4 sm:p-5 text-white">
-
-                  <h2 className="text-base sm:text-lg font-semibold mb-1">
-                    {c.name}
-                  </h2>
-
-                  <p className="text-xs sm:text-sm text-gray-400 line-clamp-2">
-                    {c.description}
-                  </p>
-
-                </div>
-
-              </div>
-
-            </Link>
-
-          ))}
-
+              </Link>
+            );
+          })}
         </div>
 
       )}

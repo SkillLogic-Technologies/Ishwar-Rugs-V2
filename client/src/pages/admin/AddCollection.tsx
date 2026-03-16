@@ -28,7 +28,6 @@ export default function AddCollection() {
     isFeatured: false,
   });
 
-  //  handle change
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -48,7 +47,6 @@ export default function AddCollection() {
     }
   };
 
-  //  SUBMIT
   const handleSubmit = async () => {
     try {
       setLoading(true);
@@ -82,10 +80,7 @@ export default function AddCollection() {
         );
         alert("Collection Updated ");
       } else {
-        await axios.post(
-          "http://localhost:5000/api/collection",
-          formData
-        );
+        await axios.post("http://localhost:5000/api/collection", formData);
         alert("Collection Added Successfully");
 
         setForm({
@@ -104,7 +99,6 @@ export default function AddCollection() {
     }
   };
 
-  //  fetch for edit
   const fetchCollectionBySlug = async (slug: string) => {
     try {
       const res = await axios.get(
@@ -134,27 +128,27 @@ export default function AddCollection() {
   }, [match, params?.slug]);
 
   return (
-    <div className="max-w-5xl mx-auto mt-20 px-4 bg-white dark:bg-neutral-950 min-h-screen transition-colors">
-      
-      <h1 className="text-2xl text-center font-semibold mb-6 text-warm-gold dark:text-yellow-400">
+    <div className="max-w-5xl mx-auto mt-16 sm:mt-20 px-4 sm:px-6 bg-white dark:bg-neutral-950 min-h-screen transition-colors">
+
+      <h1 className="text-xl sm:text-2xl text-center font-semibold mb-6 text-warm-gold dark:text-yellow-400">
         {match ? "Edit Collection" : "Add Collection"}
       </h1>
 
-      <div className="bg-white dark:bg-neutral-900 p-6 rounded-xl shadow border border-gray-200 dark:border-neutral-700 space-y-8 transition">
-        
+      <div className="bg-white dark:bg-neutral-900 p-4 sm:p-6 rounded-xl shadow border border-gray-200 dark:border-neutral-700 space-y-8 transition">
+
         {/* Basic Info */}
         <div>
           <h2 className="font-semibold mb-4 text-gray-800 dark:text-gray-200">
             Basic Information
           </h2>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <input
               name="name"
               value={form.name}
               placeholder="Collection Name"
               onChange={handleChange}
-              className="border border-gray-300 dark:border-neutral-700 p-3 rounded focus:outline-none bg-white dark:bg-neutral-800 text-gray-900 dark:text-white placeholder-gray-400"
+              className="border border-gray-300 dark:border-neutral-700 p-3 rounded focus:outline-none bg-white dark:bg-neutral-800 text-gray-900 dark:text-white placeholder-gray-400 w-full"
             />
 
             <input
@@ -162,7 +156,7 @@ export default function AddCollection() {
               value={form.slug}
               placeholder="Slug"
               onChange={handleChange}
-              className="border border-gray-300 dark:border-neutral-700 p-3 rounded focus:outline-none bg-white dark:bg-neutral-800 text-gray-900 dark:text-white placeholder-gray-400"
+              className="border border-gray-300 dark:border-neutral-700 p-3 rounded focus:outline-none bg-white dark:bg-neutral-800 text-gray-900 dark:text-white placeholder-gray-400 w-full"
             />
           </div>
 
@@ -172,6 +166,7 @@ export default function AddCollection() {
             placeholder="Description"
             onChange={handleChange}
             className="border border-gray-300 dark:border-neutral-700 p-3 rounded w-full mt-4 focus:outline-none bg-white dark:bg-neutral-800 text-gray-900 dark:text-white placeholder-gray-400"
+            rows={4}
           />
 
           <label className="flex items-center gap-2 mt-4 text-gray-700 dark:text-gray-300">
@@ -214,7 +209,7 @@ export default function AddCollection() {
         <button
           disabled={loading}
           onClick={handleSubmit}
-          className="bg-premium-gold hover:bg-warm-gold text-white px-6 py-3 rounded-lg disabled:opacity-50 transition"
+          className="w-full sm:w-auto bg-premium-gold hover:bg-warm-gold text-white px-6 py-3 rounded-lg disabled:opacity-50 transition"
         >
           {loading
             ? "Saving..."
@@ -222,6 +217,7 @@ export default function AddCollection() {
             ? "Update Collection"
             : "Save Collection"}
         </button>
+
       </div>
     </div>
   );

@@ -128,14 +128,15 @@ export default function ModernNavigation() {
                             <div className="px-4 py-3 text-sm text-foreground/60">Loading...</div>
                           )}
                           <div className="border-t border-white/10 pt-3 mt-3">
-                            <NavigationMenuLink asChild>
-                              <Link
-                                href="/collections" // View All Collections
-                                className="block px-4 py-3 text-sm text-premium-gold font-bold hover:bg-white/5 rounded-lg transition-all duration-300"
-                              >
-                                View All Collections →
-                              </Link>
-                            </NavigationMenuLink>
+                           <NavigationMenuLink asChild>
+  <Link
+    href="/collections"
+    className="w-full flex items-center px-4 py-3 text-sm font-bold text-premium-gold hover:bg-white/5 rounded-lg transition-all duration-300"
+  >
+    View All Collections
+    <span className="ml-2">→</span>
+  </Link>
+</NavigationMenuLink>
                           </div>
                         </div>
                       </div>

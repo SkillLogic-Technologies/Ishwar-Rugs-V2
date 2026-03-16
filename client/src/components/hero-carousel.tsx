@@ -206,25 +206,67 @@ export default function HeroCarousel() {
   const [slides, setSlides] = useState<CarouselSlide[]>([]);
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  // 🔹 FETCH FROM DATABASE
+  const [device, setDevice] = useState<"mobile" | "tablet" | "desktop">(
+    "desktop"
+  );
+
+  useEffect(() => {
+    const checkScreen = () => {
+      const width = window.innerWidth;
+
+      if (width < 768) {
+        setDevice("mobile");
+      } else if (width >= 768 && width <= 1024) {
+        setDevice("tablet");
+      } else {
+        setDevice("desktop");
+      }
+    };
+
+    checkScreen();
+    window.addEventListener("resize", checkScreen);
+
+    return () => window.removeEventListener("resize", checkScreen);
+  }, []);
+
   useEffect(() => {
     fetch("http://127.0.0.1:5000/api/collection")
       .then(res => res.json())
       .then(data => {
         if (data.success) {
-          setSlides(
-            data.data.map((item: any) => ({
+          const slidesData = data.data.map((item: any) => {
+            const images = item.image || [];
+
+            let imagePath = "";
+
+            // desktop = index 0
+            if (device === "desktop") {
+              imagePath = images[0]
+                ? `http://127.0.0.1:5000/${images[0]}`
+                : "";
+            } 
+            // mobile + tablet = index 1
+            else {
+              imagePath = images[1]
+                ? `http://127.0.0.1:5000/${images[1]}`
+                : "";
+            }
+
+            return {
               id: item._id,
               title: item.name,
               description: item.description,
-              image: `http://127.0.0.1:5000/${item.image}`,
+              image: imagePath,
               link: `/collections/${item.slug}`,
               buttonText: "EXPLORE COLLECTION",
-            }))
-          );
+            };
+          });
+
+          setSlides(slidesData);
         }
-      });
-  }, []);
+      })
+      .catch((err) => console.error(err));
+  }, [device]);
 
   // 🔹 AUTO SLIDE
   useEffect(() => {
@@ -248,13 +290,13 @@ export default function HeroCarousel() {
             index === currentSlide ? "opacity-100 z-10" : "opacity-0 z-0"
           }`}
         >
-          <img
-            src={slide.image}
-            alt={slide.title}
-            className="w-full h-full object-cover"
-            loading={index === 0 ? "eager" : "lazy"}
-            decoding="async"
-          />
+          {slide.image && (
+            <img
+              src={slide.image}
+              alt={slide.title}
+              className="w-full h-full"
+            />
+          )}
 
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
 
