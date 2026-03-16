@@ -192,6 +192,7 @@ const CartPage = () => {
   };
 
   const openRazorpayCheckout = (order: any, razorpayOrder: any) => {
+     console.log("RAZORPAY KEY:", import.meta.env.VITE_RAZORPAY_KEY_ID);
     const options = {
       key: import.meta.env.VITE_RAZORPAY_KEY_ID,
       amount: razorpayOrder.amount,

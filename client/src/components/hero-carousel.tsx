@@ -44,30 +44,34 @@ export default function HeroCarousel() {
       .then((res) => res.json())
       .then((data) => {
         if (data.success) {
-          setSlides(
-            data.data.map((item: any, index: number) => {
-              let imagePath = "";
+          const slidesData = data.data.map((item: any) => {
+            const images = item.image || [];
 
-              if (device === "mobile") {
-                imagePath = `/Phone/${index + 1}.png`;
-              } else if (device === "tablet") {
-                imagePath = `/tablate/${index + 1}.png`;
-              } else {
-                imagePath = `http://127.0.0.1:5000/${item.image}`;
-              }
+            let imagePath = "";
 
-              return {
-                id: item._id,
-                title: item.name,
-                description: item.description,
-                image: imagePath,
-                link: `/collections/${item.slug}`,
-                buttonText: "EXPLORE COLLECTION",
-              };
-            }),
-          );
+            // desktop = index 0
+            if (device === "desktop") {
+              imagePath = images[0] ? `http://127.0.0.1:5000/${images[0]}` : "";
+            }
+            // mobile + tablet = index 1
+            else {
+              imagePath = images[1] ? `http://127.0.0.1:5000/${images[1]}` : "";
+            }
+
+            return {
+              id: item._id,
+              title: item.name,
+              description: item.description,
+              image: imagePath,
+              link: `/collections/${item.slug}`,
+              buttonText: "EXPLORE COLLECTION",
+            };
+          });
+
+          setSlides(slidesData);
         }
-      });
+      })
+      .catch((err) => console.error(err));
   }, [device]);
 
   useEffect(() => {
@@ -83,7 +87,7 @@ export default function HeroCarousel() {
   if (!slides.length) return null;
 
   return (
-    <section className="relative mt-10 h-[70vh] md:h-[90vh] lg:h-screen overflow-hidden">
+    <section className="relative mt-20 h-[70vh] md:h-[90vh] lg:h-screen overflow-hidden">
       {slides.map((slide, index) => (
         <div
           key={slide.id}
@@ -91,11 +95,13 @@ export default function HeroCarousel() {
             index === currentSlide ? "opacity-100 z-10" : "opacity-0 z-0"
           }`}
         >
-          <img
-            src={slide.image}
-            alt={slide.title}
-            className="w-full h-full object-cover md:object-center"
-          />
+          {slide.image && (
+            <img
+              src={slide.image}
+              alt={slide.title}
+              className="w-full h-full"
+            />
+          )}
 
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20" />
 

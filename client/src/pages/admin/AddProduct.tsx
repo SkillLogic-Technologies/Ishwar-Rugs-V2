@@ -1,11 +1,10 @@
 "use client";
 
-import { useState, useEffect, } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useRoute } from "wouter";
 import toast from "react-hot-toast";
-
 
 export default function AddProductPage() {
   const [thumbnail, setThumbnail] = useState<File | null>(null);
@@ -20,8 +19,7 @@ export default function AddProductPage() {
   const [productId, setProductId] = useState("");
   const [match, params] = useRoute("/admin/edit-products/:slug");
 
-  const navigate = useNavigate()
-
+  const navigate = useNavigate();
 
   const [form, setForm] = useState({
     title: "",
@@ -66,7 +64,6 @@ export default function AddProductPage() {
 
       setCategories(catRes.data.data);
       setCollections(colRes.data.data);
-
     } catch (error) {
       console.log(error);
     }
@@ -90,7 +87,9 @@ export default function AddProductPage() {
 
       formData.append("category", categoryId);
       formData.append("collection", collectionId);
-      formData.append("thumbnail", thumbnail);
+      if (thumbnail) {
+        formData.append("thumbnail", thumbnail);
+      }
       images.forEach((img) => {
         formData.append("images", img);
       });
@@ -99,30 +98,25 @@ export default function AddProductPage() {
         await axios.put(
           `http://localhost:5000/api/product/${productId}`,
           formData,
-          { headers: { "Content-Type": "multipart/form-data" } }
+          { headers: { "Content-Type": "multipart/form-data" } },
         );
-        toast.success("Product updated successfully ✅")
+        toast.success("Product updated successfully ✅");
       } else {
-        await axios.post(
-          "http://localhost:5000/api/product",
-          formData,
-          { headers: { "Content-Type": "multipart/form-data" } }
-        );
-        toast.success("Product added successfully ✅")
+        await axios.post("http://localhost:5000/api/product", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        toast.success("Product added successfully ✅");
       }
-      navigate('/admin/products')
-
+      navigate("/admin/products");
     } catch (error) {
       console.log(error);
-      toast.error("Error while adding product ❌")
+      toast.error("Error while adding product ❌");
     }
   };
 
   const fetchProductByslug = async (slug: string) => {
     try {
-      const res = await axios.get(
-        `http://localhost:5000/api/product/${slug}`
-      );
+      const res = await axios.get(`http://localhost:5000/api/product/${slug}`);
 
       const product = res.data.data;
 
@@ -158,7 +152,6 @@ export default function AddProductPage() {
       setExistingThumbnail(product.thumbnail || "");
       setExistingImages(product.images || []);
       setProductId(product._id);
-
     } catch (error) {
       console.log(error);
     }
@@ -169,7 +162,6 @@ export default function AddProductPage() {
     if (match && params?.slug) {
       fetchProductByslug(params.slug);
     }
-
   }, [match, params?.slug]);
 
   return (
@@ -179,10 +171,18 @@ export default function AddProductPage() {
       </h1>
       <div className="bg-white dark:bg-black/40 p-6 rounded-xl shadow space-y-8">
         <div>
-          <h2 className="font-semibold mb-4 text-gray-800 dark:text-gray-200">Basic Information</h2>
+          <h2 className="font-semibold mb-4 text-gray-800 dark:text-gray-200">
+            Basic Information
+          </h2>
 
           <div className="grid grid-cols-2 gap-4">
-            <input name="title" value={form.title} placeholder="Product Title" onChange={handleChange} className="mb-4 border p-3 rounded focus:outline-none bg-white dark:bg-black/10 dark:border-gray-700 dark:text-white" />
+            <input
+              name="title"
+              value={form.title}
+              placeholder="Product Title"
+              onChange={handleChange}
+              className="mb-4 border p-3 rounded focus:outline-none bg-white dark:bg-black/10 dark:border-gray-700 dark:text-white"
+            />
             <input
               name="tags"
               value={form.tags}
@@ -190,7 +190,6 @@ export default function AddProductPage() {
               onChange={handleChange}
               className="border p-3 mb-4 rounded focus:outline-none bg-white dark:bg-black/10 dark:border-gray-700 dark:text-white"
             />
-
           </div>
 
           <textarea
@@ -203,37 +202,89 @@ export default function AddProductPage() {
         </div>
 
         <div>
-          <h2 className="font-semibold mb-4">
-            Pricing & Stock
-          </h2>
+          <h2 className="font-semibold mb-4">Pricing & Stock</h2>
 
           <div className="grid grid-cols-4 gap-4">
-
-            <input name="mrp" value={form.mrp} placeholder="MRP" onChange={handleChange} className="border p-3 rounded focus:outline-none bg-white dark:bg-black/10 dark:border-gray-700 dark:text-white" />
-            <input name="discountPercent" value={form.discountPercent} placeholder="Discount %" onChange={handleChange} className="border p-3 rounded focus:outline-none bg-white dark:bg-black/10 dark:border-gray-700 dark:text-white" />
-            <input name="stock" value={form.stock} placeholder="Stock" onChange={handleChange} className="border p-3 rounded focus:outline-none bg-white dark:bg-black/10 dark:border-gray-700 dark:text-white" />
-
+            <input
+              name="mrp"
+              value={form.mrp}
+              placeholder="MRP"
+              onChange={handleChange}
+              className="border p-3 rounded focus:outline-none bg-white dark:bg-black/10 dark:border-gray-700 dark:text-white"
+            />
+            <input
+              name="discountPercent"
+              value={form.discountPercent}
+              placeholder="Discount %"
+              onChange={handleChange}
+              className="border p-3 rounded focus:outline-none bg-white dark:bg-black/10 dark:border-gray-700 dark:text-white"
+            />
+            <input
+              name="stock"
+              value={form.stock}
+              placeholder="Stock"
+              onChange={handleChange}
+              className="border p-3 rounded focus:outline-none bg-white dark:bg-black/10 dark:border-gray-700 dark:text-white"
+            />
           </div>
 
           <label className="flex items-center gap-2 mt-4">
-            <input type="checkbox" checked={form.isFeatured} name="isFeatured" onChange={handleChange} />
+            <input
+              type="checkbox"
+              checked={form.isFeatured}
+              name="isFeatured"
+              onChange={handleChange}
+            />
             Featured Product
           </label>
         </div>
 
         <div>
-          <h2 className="font-semibold mb-4">
-            Specifications
-          </h2>
+          <h2 className="font-semibold mb-4">Specifications</h2>
 
           <div className="grid grid-cols-3 gap-4">
-
-            <input name="material" value={form.material} placeholder="Material" onChange={handleChange} className="border p-3 rounded focus:outline-none bg-white dark:bg-black/10 dark:border-gray-700 dark:text-white" />
-            <input name="weaveType" value={form.weaveType} placeholder="Weave Type" onChange={handleChange} className="border p-3 rounded focus:outline-none bg-white dark:bg-black/10 dark:border-gray-700 dark:text-white" />
-            <input name="pattern" value={form.pattern} placeholder="Pattern" onChange={handleChange} className="border p-3 rounded focus:outline-none bg-white dark:bg-black/10 dark:border-gray-700 dark:text-white" />
-            <input name="style" value={form.style} placeholder="Style" onChange={handleChange} className="border p-3 rounded focus:outline-none bg-white dark:bg-black/10 dark:border-gray-700 dark:text-white" />
-            <input name="pileHeight" value={form.pileHeight} placeholder="Pile Height" onChange={handleChange} className="border p-3 rounded focus:outline-none bg-white dark:bg-black/10 dark:border-gray-700 dark:text-white" />
-            <input name="shape" value={form.shape} placeholder="Shape" onChange={handleChange} className="border p-3 rounded focus:outline-none bg-white dark:bg-black/10 dark:border-gray-700 dark:text-white" />
+            <input
+              name="material"
+              value={form.material}
+              placeholder="Material"
+              onChange={handleChange}
+              className="border p-3 rounded focus:outline-none bg-white dark:bg-black/10 dark:border-gray-700 dark:text-white"
+            />
+            <input
+              name="weaveType"
+              value={form.weaveType}
+              placeholder="Weave Type"
+              onChange={handleChange}
+              className="border p-3 rounded focus:outline-none bg-white dark:bg-black/10 dark:border-gray-700 dark:text-white"
+            />
+            <input
+              name="pattern"
+              value={form.pattern}
+              placeholder="Pattern"
+              onChange={handleChange}
+              className="border p-3 rounded focus:outline-none bg-white dark:bg-black/10 dark:border-gray-700 dark:text-white"
+            />
+            <input
+              name="style"
+              value={form.style}
+              placeholder="Style"
+              onChange={handleChange}
+              className="border p-3 rounded focus:outline-none bg-white dark:bg-black/10 dark:border-gray-700 dark:text-white"
+            />
+            <input
+              name="pileHeight"
+              value={form.pileHeight}
+              placeholder="Pile Height"
+              onChange={handleChange}
+              className="border p-3 rounded focus:outline-none bg-white dark:bg-black/10 dark:border-gray-700 dark:text-white"
+            />
+            <input
+              name="shape"
+              value={form.shape}
+              placeholder="Shape"
+              onChange={handleChange}
+              className="border p-3 rounded focus:outline-none bg-white dark:bg-black/10 dark:border-gray-700 dark:text-white"
+            />
 
             <input
               type="text"
@@ -283,23 +334,35 @@ export default function AddProductPage() {
         </div>
 
         <div>
-          <h2 className="font-semibold mb-4">
-            Dimensions
-          </h2>
+          <h2 className="font-semibold mb-4">Dimensions</h2>
 
           <div className="grid grid-cols-3 gap-4">
-
-            <input name="length" value={form.length} placeholder="Length (ft)" onChange={handleChange} className="border p-3 rounded focus:outline-none bg-white dark:bg-black/10 dark:border-gray-700 dark:text-white" />
-            <input name="width" value={form.width} placeholder="Width (ft)" onChange={handleChange} className="border p-3 rounded focus:outline-none bg-white dark:bg-black/10 dark:border-gray-700 dark:text-white" />
-            <input name="weight" value={form.weight} placeholder="Weight (kg)" onChange={handleChange} className="border p-3 rounded focus:outline-none bg-white dark:bg-black/10 dark:border-gray-700 dark:text-white" />
-
+            <input
+              name="length"
+              value={form.length}
+              placeholder="Length (ft)"
+              onChange={handleChange}
+              className="border p-3 rounded focus:outline-none bg-white dark:bg-black/10 dark:border-gray-700 dark:text-white"
+            />
+            <input
+              name="width"
+              value={form.width}
+              placeholder="Width (ft)"
+              onChange={handleChange}
+              className="border p-3 rounded focus:outline-none bg-white dark:bg-black/10 dark:border-gray-700 dark:text-white"
+            />
+            <input
+              name="weight"
+              value={form.weight}
+              placeholder="Weight (kg)"
+              onChange={handleChange}
+              className="border p-3 rounded focus:outline-none bg-white dark:bg-black/10 dark:border-gray-700 dark:text-white"
+            />
           </div>
         </div>
 
         <div>
-          <h2 className="font-semibold mb-4">
-            Media
-          </h2>
+          <h2 className="font-semibold mb-4">Media</h2>
 
           <label className="block mb-1 font-medium">
             Thumbnail (Only 1 Image)
@@ -342,8 +405,6 @@ export default function AddProductPage() {
             }
             className="border p-3 rounded w-full mb-4 focus:outline-none bg-white dark:bg-black/10 dark:border-gray-700 dark:text-white"
           />
-
-
         </div>
 
         <div>
@@ -377,10 +438,10 @@ export default function AddProductPage() {
               ))}
             </select>
           </div>
-
         </div>
 
-        <button className="
+        <button
+          className="
     bg-premium-gold
     text-white
     px-4 py-2
@@ -391,10 +452,11 @@ export default function AddProductPage() {
     dark:from-yellow-400
     dark:to-yellow-600
     dark:text-black
-  " onClick={handleSubmit}>
+  "
+          onClick={handleSubmit}
+        >
           Save Product
         </button>
-
       </div>
     </div>
   );
