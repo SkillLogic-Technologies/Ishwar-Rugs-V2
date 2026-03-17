@@ -179,49 +179,37 @@ export default function ModernNavigation() {
                   <NavigationMenuContent>
 
                     <div className="w-96 p-8 glass-effect">
-
-                      <h4 className="font-serif text-xl font-bold text-premium-gold mb-6">
-                        Browse Collections
-                      </h4>
-
-                      <div className="grid gap-3">
-
-                        {collections.length > 0 ? (
-                          collections.map((c) => (
-
-                            <NavigationMenuLink key={c._id} asChild>
-
+                      <div className="space-y-4">
+                        <h4 className="font-serif text-xl font-bold text-premium-gold mb-6">
+                          Browse Collections
+                        </h4>
+                        <div className="grid gap-3">
+                          {collections.length > 0 ? (
+                            collections.map((c) => (
+                              <NavigationMenuLink key={c._id} asChild>
+                                <Link
+                                  href={`/collections/${c.slug}`}
+                                  className="block px-4 py-3 text-sm text-foreground hover:text-premium-gold hover:bg-white/5 rounded-lg transition-all duration-300"
+                                >
+                                  <div className="font-semibold">{c.name}</div>
+                                  <div className="text-xs text-foreground/60 mt-1">{c.description}</div>
+                                </Link>
+                              </NavigationMenuLink>
+                            ))
+                          ) : (
+                            <div className="px-4 py-3 text-sm text-foreground/60">Loading...</div>
+                          )}
+                          <div className="border-t border-white/10 pt-3 mt-3">
+                            <NavigationMenuLink asChild>
                               <Link
-                                href={`/collections/${c.slug}`}
-                                className="block px-4 py-3 text-sm hover:text-premium-gold"
+                                href="/collections" // View All Collections
+                                className="block px-4 py-3 text-sm text-premium-gold font-bold hover:bg-white/5 rounded-lg transition-all duration-300"
                               >
-
-                                <div className="font-semibold">{c.name}</div>
-
-                                <div className="text-xs opacity-60">
-                                  {c.description}
-                                </div>
-
+                                View All Collections →
                               </Link>
-
                             </NavigationMenuLink>
-
-                          ))
-                        ) : (
-                          <div>Loading...</div>
-                        )}
-
-                        <NavigationMenuLink asChild>
-
-                          <Link
-                            href="/collections"
-                            className="text-premium-gold font-bold"
-                          >
-                            View All Collections →
-                          </Link>
-
-                        </NavigationMenuLink>
-
+                          </div>
+                        </div>
                       </div>
 
                     </div>

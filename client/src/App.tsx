@@ -16,7 +16,7 @@ import axios from "axios";
 
 import TrackVisit from "@/components/TrackVisit";
 
-// Public pages
+/* Public pages */
 import Home from "@/pages/home";
 import Collections from "@/pages/collections";
 import CollectionDetail from "@/pages/collection-detail";
@@ -31,7 +31,7 @@ import CartPage from "./pages/CartPage";
 import OrdersPage from "./pages/OrdersPage";
 import Verify from "@/pages/verify";
 
-// Admin pages
+/* Admin pages */
 import AdminLogin from "@/pages/admin/login";
 import AdminDashboard from "@/pages/admin/dashboard";
 import AdminCollections from "@/pages/admin/collections";
@@ -51,18 +51,19 @@ import "@/components/styles/carousel.css";
 function Router() {
   const { setWishlistCount } = useWishlist();
   const { setCartCount } = useCart();
-  const [location] = useLocation();
+  const [location] = useLocation(); // ✅ FIX
   const isAdminRoute = location.startsWith("/admin");
 
   const fetchCartCount = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/user/cart", {
-        withCredentials: true,
-      });
+      const res = await axios.get(
+        "http://localhost:5000/api/user/cart",
+        { withCredentials: true }
+      );
       const items = res.data.items || [];
       const count = items.reduce(
         (acc: number, item: any) => acc + item.quantity,
-        0,
+        0
       );
       setCartCount(count);
     } catch {
@@ -71,15 +72,12 @@ function Router() {
   };
 
   const fetchWishlist = async () => {
-    try {
-      const res = await axios.get("http://localhost:5000/api/user/wishlist", {
-        withCredentials: true,
-      });
-      const items = res.data.data || [];
-      setWishlistCount(items.length);
-    } catch {
-      console.log("Wishlist error");
-    }
+    const res = await axios.get(
+      "http://localhost:5000/api/user/wishlist",
+      { withCredentials: true }
+    );
+    const items = res.data.data || [];
+    setWishlistCount(items.length);
   };
 
   useEffect(() => {
@@ -90,46 +88,42 @@ function Router() {
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
       <TrackVisit />
+
       {!isAdminRoute && <ModernNavigation />}
       <ScrollToTop />
 
       <main className="flex-1">
         <Switch>
-          {/* Public Routes */}
+          {/* Public routes */}
           <Route path="/" component={Home} />
           <Route path="/collections" component={Collections} />
+          <Route path="/collections/:slug" component={CollectionDetail} />
+          <Route path="/product/:slug" component={ProductDetail} />
+          <Route path="/category/:slug" component={CategoryPage} />
           <Route path="/about" component={About} />
           <Route path="/contact" component={Contact} />
           <Route path="/stories" component={Stories} />
-          <Route path="/orders" component={OrdersPage} />
-          <Route path="/verify" component={Verify} />
 
-          <Route path="/collections/:slug" component={CollectionDetail} />
-          <Route path="/product/:slug" component={ProductDetail} />
-          <Route path="/category/:slug">
-            <CategoryPage />
-          </Route>
-          <Route path="/wishlist">
-            <WishlistPage />
-          </Route>
-          <Route path="/cart">
-            <CartPage />
-          </Route>
-
-          {/* Admin Routes */}
+          {/* Admin routes */}
           <Route path="/admin/login" component={AdminLogin} />
 
-          <Route path="/admin/dashboard">
-            <AdminLayout>
-              <AdminDashboard />
-            </AdminLayout>
-          </Route>
+          <Route
+            path="/admin/dashboard"
+            component={() => (
+              <AdminLayout>
+                <AdminDashboard />
+              </AdminLayout>
+            )}
+          />
 
-          <Route path="/admin/collections">
-            <AdminLayout>
-              <AdminCollections />
-            </AdminLayout>
-          </Route>
+          <Route
+            path="/admin/collections"
+            component={() => (
+              <AdminLayout>
+                <AdminCollections />
+              </AdminLayout>
+            )}
+          />
 
           <Route path="/admin/add-collection">
             <AdminLayout>
@@ -137,72 +131,62 @@ function Router() {
             </AdminLayout>
           </Route>
 
-          <Route path="/admin/edit-collection/:slug">
-            <AdminLayout>
-              <AddCollection />
-            </AdminLayout>
-          </Route>
+          <Route
+            path="/admin/edit-collection/:slug"
+            component={() => (
+              <AdminLayout>
+                <AddCollection />
+              </AdminLayout>
+            )}
+          />
 
-          <Route path="/admin/products">
-            <AdminLayout>
-              <AdminProducts />
-            </AdminLayout>
-          </Route>
+          <Route
+            path="/admin/products"
+            component={() => (
+              <AdminLayout>
+                <AdminProducts />
+              </AdminLayout>
+            )}
+          />
 
-          <Route path="/admin/add-products">
-            <AdminLayout>
-              <AdminAddProducts />
-            </AdminLayout>
-          </Route>
+          <Route
+            path="/admin/add-products"
+            component={() => (
+              <AdminLayout>
+                <AdminAddProducts />
+              </AdminLayout>
+            )}
+          />
 
-          <Route path="/admin/edit-products/:slug">
-            <AdminLayout>
-              <AdminAddProducts />
-            </AdminLayout>
-          </Route>
+          <Route
+            path="/admin/edit-products/:slug"
+            component={() => (
+              <AdminLayout>
+                <AdminAddProducts />
+              </AdminLayout>
+            )}
+          />
 
-          <Route path="/admin/categories">
-            <AdminLayout>
-              <AdminCategories />
-            </AdminLayout>
-          </Route>
+          <Route path="/admin/inquiries" component={InquiriesPage} />
+          <Route path="/admin/categories" component={AdminCategories} />
 
-          <Route path="/admin/add-categories">
-            <AdminLayout>
-              <AdminAddCategory />
-            </AdminLayout>
-          </Route>
+          <Route
+            path="/admin/customers"
+            component={() => (
+              <AdminLayout>
+                <AdminCustomers />
+              </AdminLayout>
+            )}
+          />
 
-          <Route path="/admin/edit-category/:slug">
-            <AdminLayout>
-              <AdminAddCategory />
-            </AdminLayout>
-          </Route>
+          <Route path="/admin/orders" component={AdminOrders} />
+          <Route path="/verify" component={Verify} />
 
-          <Route path="/admin/inquiries">
-            <AdminLayout>
-              <InquiriesPage />
-            </AdminLayout>
-          </Route>
+          {/* Extra routes */}
+          <Route path="/wishlist" component={WishlistPage} />
+          <Route path="/cart" component={CartPage} />
 
-          <Route path="/admin/inquiries/:id">
-            <AdminLayout>
-              <InquiryDetailPage />
-            </AdminLayout>
-          </Route>
-
-          <Route path="/admin/customers">
-            <AdminLayout>
-              <AdminCustomers />
-            </AdminLayout>
-          </Route>
-
-          <Route path="/admin/orders">
-            <AdminLayout>
-              <AdminOrders />
-            </AdminLayout>
-          </Route>
-
+          {/* Fallback */}
           <Route component={NotFound} />
         </Switch>
       </main>
