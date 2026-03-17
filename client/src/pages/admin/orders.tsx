@@ -58,7 +58,7 @@ function AdminOrders() {
   };
 
   return (
-    <div className="min-h-screen pt-28 px-8 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-black dark:to-neutral-950 text-black dark:text-white">
+    <div className="min-h-screen pt-28  bg-gradient-to-br from-gray-50 to-gray-100 dark:from-black dark:to-neutral-950 text-black dark:text-white">
 
       {/* Title */}
       <h1 className="text-4xl font-bold mb-14 tracking-wide flex items-center gap-3">
