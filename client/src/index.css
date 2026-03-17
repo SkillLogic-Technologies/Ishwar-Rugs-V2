@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Ancizar+Serif:ital,wght@0,300..900;1,300..900&family=Caveat:wght@400..700&family=Jost:ital,wght@0,100..900;1,100..900&family=Lobster+Two:ital,wght@0,400;0,700;1,400;1,700&family=Lora:ital,wght@0,400..700;1,400..700&family=Outfit:wght@100..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100..900;1,100..900&family=Varela+Round&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -78,7 +79,7 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Playfair Display', serif;
+    font-family: "Roboto", sans-serif;
   }
 }
 
@@ -276,4 +277,36 @@
 
 .btn-secondary:hover {
   @apply bg-opacity-90 transform scale-105;
+}
+
+.custom-prev,
+.custom-next {
+  @apply absolute top-1/2 -translate-y-1/2 z-20 p-2 cursor-pointer rounded transition-all duration-200;
+}
+
+.custom-prev { @apply left-2; }
+.custom-next { @apply right-2; }
+
+.chevron {
+  @apply text-black dark:text-white text-xl;
+}
+
+.custom-prev:hover,
+.custom-next:hover {
+  @apply bg-black/10 dark:bg-white/20 rounded-full backdrop-blur-sm;
+}
+
+.smooth-swiper .swiper-wrapper {
+  transition-timing-function: linear !important;
+}
+
+
+/* FIX HORIZONTAL SCROLL ISSUE */
+html, body {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+* {
+  box-sizing: border-box;
 }

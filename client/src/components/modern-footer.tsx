@@ -17,7 +17,7 @@ export default function ModernFooter() {
       {/* Background image and overlay */}
       <div className="absolute inset-0 z-0">
         <img
-          src="https://i.postimg.cc/B6rGnSyc/Chat-GPT-Image-Jul-1-2025-01-07-00-AM.png"
+          src="https://res.cloudinary.com/dzufohihn/image/upload/v1767769114/Chat-GPT-Image-Jul-1-2025-01-07-00-AM_i0zmos.png"
           alt="Heritage background"
           className="w-full h-full object-cover"
         />
@@ -25,7 +25,7 @@ export default function ModernFooter() {
       </div>
 
       {/* Content over background */}
-      <div className="relative z-10">
+      <div className="relative ">
         <div className="max-w-7xl mx-auto px-4 py-20">
           {/* Newsletter */}
           <div className="text-center mb-20">
@@ -55,7 +55,7 @@ export default function ModernFooter() {
               <div className="mb-8">
                 <div className="mb-4">
                   <img
-                    src="https://i.postimg.cc/fy162xqr/Chat-GPT-Image-Jul-10-2025-02-12-10-PM.png"
+                    src="https://res.cloudinary.com/dzufohihn/image/upload/v1767769166/Chat-GPT-Image-Jul-10-2025-02-12-10-PM_hzqpxx.png"
                     alt="Ishwar Rugs Logo"
                     className="h-20 w-auto"
                   />

@@ -1,8 +1,7 @@
-// pages/contact.tsx
-
+"use client";
+import { motion } from "framer-motion";
+import { FormEvent } from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   MapPin,
   Phone,
@@ -11,12 +10,10 @@ import {
   Instagram,
   Linkedin,
 } from "lucide-react";
-import { api } from "@/lib/api";
-import { insertInquirySchema, type InsertInquiry } from "@shared/schema";
+import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/hooks/use-toast";
 import {
   Form,
   FormControl,
@@ -35,65 +32,102 @@ import {
 } from "@/components/ui/select";
 
 export default function Contact() {
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
-
-  const form = useForm<InsertInquiry>({
-    resolver: zodResolver(insertInquirySchema),
+  const form = useForm({
     defaultValues: {
-      name: "",
+      fullName: "",
       email: "",
       phone: "",
       subject: "",
       message: "",
-      type: "general",
+      inquiryType: "general",
     },
   });
 
-  const createInquiryMutation = useMutation({
-    mutationFn: api.inquiries.create,
-    onSuccess: () => {
-      toast({
-        title: "Inquiry Submitted Successfully",
-        description: "We'll get back to you within 24 hours.",
-      });
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const data = {
+      fullName: form.getValues("fullName") as string,
+      email: form.getValues("email") as string,
+      phone: form.getValues("phone") as string,
+      subject: form.getValues("subject") as string,
+      message: form.getValues("message") as string,
+      inquiryType: form.getValues("inquiryType") as string,
+    };
+
+    try {
+      const res = await axios.post(
+        "http://127.0.0.1:5000/api/contact-us/",
+        data,
+        {
+          withCredentials: true,
+        },
+      );
+
+      alert("Inquiry Sent Successfully!");
       form.reset();
-      queryClient.invalidateQueries({ queryKey: ["/api/inquiries"] });
-    },
-    onError: (error: any) => {
-      toast({
-        title: "Submission Failed",
-        description: error.message || "Something went wrong. Please try again.",
-        variant: "destructive",
-      });
-    },
-  });
-
-  const onSubmit = (data: InsertInquiry) => {
-    createInquiryMutation.mutate(data);
+    } catch (error) {
+      alert("Failed to send Inquiry! Please try again.");
+    }
   };
 
   return (
-    <div className="min-h-screen pt-20">
+    <div className="min-h-screen pt-16">
       {/* Hero Section */}
-      <section className="py-20 bg-gradient-to-b from-[#f3efe9] to-[#e7ded3] dark:from-[#2f2727] dark:to-[#1c1816] text-primary-brown dark:text-warm-gold transition-colors">
+      <motion.section
+        initial={{ opacity: 0, y: -30 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.3 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+        className="py-20 bg-gradient-to-b from-[#f3efe9] to-[#e7ded3] dark:from-[#2f2727] dark:to-[#1c1816] text-primary-brown dark:text-warm-gold transition-colors"
+      >
         <div className="max-w-6xl mx-auto px-4 text-center">
-          <h1 className="font-serif text-5xl md:text-7xl font-bold mb-6">
+          <motion.h1
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{
+              delay: 0.3,
+              duration: 0.9,
+              ease: [0.25, 0.1, 0.25, 1],
+            }}
+            className="font-serif text-5xl md:text-7xl font-bold mb-6"
+          >
             GET IN TOUCH
-          </h1>
-          <p className="text-xl text-inherit opacity-80 leading-relaxed max-w-4xl mx-auto">
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{
+              delay: 0.6,
+              duration: 0.9,
+              ease: [0.25, 0.1, 0.25, 1],
+            }}
+            className="text-xl text-inherit opacity-80 leading-relaxed max-w-4xl mx-auto"
+          >
             Ready to transform your space with our luxury carpets? We're here to
             help you find the perfect piece or create a custom design that
             reflects your unique vision.
-          </p>
+          </motion.p>
         </div>
-      </section>
+      </motion.section>
 
       {/* Contact Section */}
-      <section className="py-20 bg-background text-foreground">
-        <div className="max-w-7xl mx-auto px-4 grid lg:grid-cols-2 gap-12">
+      <motion.section
+        initial={{ opacity: 0, scale: 0.98 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        viewport={{ once: true, amount: 0.2 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className="py-20 bg-background text-foreground h-full"
+      >
+        <div className="max-w-7xl mx-auto px-4 grid lg:grid-cols-2  gap-12">
           {/* Contact Info */}
-          <div className="space-y-8">
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            className="space-y-6"
+          >
             <Card className="bg-muted text-foreground">
               <CardHeader>
                 <CardTitle className="font-serif text-3xl">
@@ -106,8 +140,7 @@ export default function Contact() {
                   <div>
                     <h4 className="font-semibold text-warm-gold">Address</h4>
                     <p>
-                      Civil Lines, Power House Road
-                      <br />
+                      Civil Lines, Power House Road <br />
                       Bhadohi – 221401 (U.P), India
                     </p>
                   </div>
@@ -128,6 +161,7 @@ export default function Contact() {
                 </div>
               </CardContent>
             </Card>
+
             <Card>
               <CardHeader>
                 <CardTitle className="font-serif text-2xl">
@@ -168,225 +202,154 @@ export default function Contact() {
                 </a>
               </CardContent>
             </Card>
-          </div>
+          </motion.div>
 
           {/* Contact Form */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="font-serif text-3xl">
-                Send Us a Message
-              </CardTitle>
-              <p className="text-muted-foreground text-sm">
-                We'd love to hear from you about collections or custom designs.
-              </p>
-            </CardHeader>
-            <CardContent>
-              <Form {...form}>
-                <form
-                  onSubmit={form.handleSubmit(onSubmit)}
-                  className="space-y-6"
-                >
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <FormField
-                      control={form.control}
-                      name="name"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Full Name *</FormLabel>
-                          <FormControl>
-                            <Input {...field} placeholder="" />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="email"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Email *</FormLabel>
-                          <FormControl>
-                            <Input {...field} placeholder="" />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
-
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <FormField
-                      control={form.control}
-                      name="phone"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Phone</FormLabel>
-                          <FormControl>
-                            <Input {...field} placeholder="+91..." />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="type"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Inquiry Type</FormLabel>
-                          <Select
-                            onValueChange={field.onChange}
-                            defaultValue={field.value}
-                          >
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, amount: 0.3 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+          >
+            <Card className="h-full">
+              <CardHeader>
+                <CardTitle className="font-serif text-3xl">
+                  Send Us a Message
+                </CardTitle>
+                <p className="text-muted-foreground text-sm">
+                  We'd love to hear from you about collections or custom
+                  designs.
+                </p>
+              </CardHeader>
+              <CardContent>
+                <Form {...form}>
+                  <form onSubmit={handleSubmit} className="space-y-6">
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <FormField
+                        control={form.control}
+                        name="fullName"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Full Name *</FormLabel>
                             <FormControl>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Select type" />
-                              </SelectTrigger>
+                              <Input {...field} placeholder="" />
                             </FormControl>
-                            <SelectContent>
-                              <SelectItem value="general">
-                                General Inquiry
-                              </SelectItem>
-                              <SelectItem value="collection_inquiry">
-                                Collection Inquiry
-                              </SelectItem>
-                              <SelectItem value="custom_design">
-                                Custom Design
-                              </SelectItem>
-                            </SelectContent>
-                          </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="email"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Email *</FormLabel>
+                            <FormControl>
+                              <Input {...field} placeholder="" />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-6">
+                      <FormField
+                        control={form.control}
+                        name="phone"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Phone</FormLabel>
+                            <FormControl>
+                              <Input {...field} placeholder="+91..." />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+
+                      <FormField
+                        control={form.control}
+                        name="inquiryType"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Inquiry Type</FormLabel>
+                            <Select
+                              onValueChange={field.onChange}
+                              defaultValue={field.value}
+                            >
+                              <FormControl>
+                                <SelectTrigger>
+                                  <SelectValue placeholder="Select type" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                <SelectItem value="general">
+                                  General Inquiry
+                                </SelectItem>
+                                <SelectItem value="collection_inquiry">
+                                  Collection Inquiry
+                                </SelectItem>
+                                <SelectItem value="custom_design">
+                                  Custom Design
+                                </SelectItem>
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+
+                    <FormField
+                      control={form.control}
+                      name="subject"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Subject *</FormLabel>
+                          <FormControl>
+                            <Input
+                              {...field}
+                              placeholder="Inquiry about modern rugs"
+                            />
+                          </FormControl>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
-                  </div>
 
-                  <FormField
-                    control={form.control}
-                    name="subject"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Subject *</FormLabel>
-                        <FormControl>
-                          <Input
-                            {...field}
-                            placeholder="Inquiry about modern rugs"
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                    <FormField
+                      control={form.control}
+                      name="message"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Message *</FormLabel>
+                          <FormControl>
+                            <Textarea
+                              {...field}
+                              rows={6}
+                              placeholder="Tell us more..."
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
 
-                  <FormField
-                    control={form.control}
-                    name="message"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Message *</FormLabel>
-                        <FormControl>
-                          <Textarea
-                            {...field}
-                            rows={6}
-                            placeholder="Tell us more..."
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <Button
-                    type="submit"
-                    disabled={createInquiryMutation.isPending}
-                    className="w-full btn-primary text-lg py-6"
-                  >
-                    {createInquiryMutation.isPending
-                      ? "SENDING..."
-                      : "SEND MESSAGE"}
-                  </Button>
-                </form>
-              </Form>
-            </CardContent>
-          </Card>
+                    <Button
+                      type="submit"
+                      className="w-full btn-primary text-lg py-6"
+                    >
+                      SEND MESSAGE
+                    </Button>
+                  </form>
+                </Form>
+              </CardContent>
+            </Card>
+          </motion.div>
         </div>
-      </section>
-      {/* Custom Design Services */}
-      <section className="py-20 bg-muted text-foreground">
-        <div className="max-w-6xl mx-auto px-4 text-center">
-          <h2 className="font-serif text-4xl md:text-5xl font-bold mb-6">
-            Custom Design Services
-          </h2>
-          <p className="text-xl text-muted-foreground mb-12 max-w-3xl mx-auto">
-            From concept to creation — collaborate with our designers to create
-            bespoke rugs that reflect your style.
-          </p>
-
-          <div className="grid md:grid-cols-3 gap-8 mb-12">
-            {["Consultation", "Design & Approval", "Crafting & Delivery"].map(
-              (step, index) => (
-                <div key={index} className="text-center">
-                  <div className="bg-warm-gold text-primary-brown w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 font-serif text-2xl font-bold">
-                    {index + 1}
-                  </div>
-                  <h3 className="font-serif text-xl font-semibold mb-2">
-                    {step}
-                  </h3>
-                  <p className="text-muted-foreground">
-                    {step === "Consultation" &&
-                      "Share your preferences, dimensions, and colors with our team."}
-                    {step === "Design & Approval" &&
-                      "We prepare design drafts and seek your feedback and approval."}
-                    {step === "Crafting & Delivery" &&
-                      "Our artisans handcraft your rug with the finest materials."}
-                  </p>
-                </div>
-              )
-            )}
-          </div>
-
-          <Button className="btn-secondary text-lg px-8 py-4">
-            START CUSTOM DESIGN
-          </Button>
-        </div>
-      </section>
-
-      {/* Showroom Visit */}
-      <section className="py-20 bg-soft-gray dark:bg-zinc-900">
-        <div className="max-w-6xl mx-auto px-4 text-center">
-          <h2 className="font-serif text-4xl md:text-5xl font-bold text-primary-brown dark:text-white mb-6">
-            Visit Our Showroom
-          </h2>
-          <p className="text-xl text-primary-brown dark:text-zinc-200 opacity-80 mb-12 max-w-3xl mx-auto">
-            Explore our collections firsthand in Bhadohi. Personalized
-            appointments available.
-          </p>
-
-          <div className="bg-background dark:bg-muted p-8 rounded-lg shadow-md">
-            <h3 className="font-serif text-2xl font-bold text-primary-brown dark:text-white mb-4">
-              Address
-            </h3>
-            <p className="text-primary-brown dark:text-zinc-200 mb-4">
-              Civil Lines, Power House Road
-              <br />
-              Bhadohi – 221401 (U.P)
-            </p>
-            <p className="text-primary-brown dark:text-zinc-300 opacity-80 mb-6">
-              Call ahead to book a personalized tour.
-            </p>
-
-            <div className="flex justify-center">
-              <a href="tel:05414224518">
-                <Button className="btn-primary">SCHEDULE APPOINTMENT</Button>
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer Placeholder (Optional) */}
-      {/* You can insert <Footer /> here */}
+      </motion.section>
     </div>
   );
 }

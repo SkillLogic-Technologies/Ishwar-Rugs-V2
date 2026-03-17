@@ -1,19 +1,42 @@
-import { ReactNode } from "react";
+import { ReactNode, useState, useEffect } from "react";
 import AdminSidebar from "./AdminSidebar";
+import AdminNavbar from "./AdminNavbar";
+import axios from "axios";
+import { useLocation } from "wouter";
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [, navigate] = useLocation(); 
+  
+  useEffect(() => {
+    const checkAdmin = async () => {
+      try {
+        await axios.get(
+          "http://localhost:5000/api/admin/profile",
+          { withCredentials: true }
+        );
+      } catch (error) {
+        navigate("/admin/login"); // 🚀 redirect if not admin
+      }
+    };
+
+    checkAdmin();
+  }, []);
   return (
-    <div className="flex min-h-screen bg-soft-gray dark:bg-neutral-950 text-primary-brown dark:text-white">
-      {/* Sidebar */}
-      <aside className="w-64 bg-white dark:bg-neutral-900 shadow-md fixed top-0 left-0 h-full z-10 border-r border-gray-200 dark:border-neutral-800">
-        <AdminSidebar />
+    <div className="flex bg-gray-50 dark:bg-neutral-950 w-full text-primary-brown dark:text-white">
+      
+      <aside>
+        <AdminSidebar setIsOpen={setIsOpen} isOpen={isOpen} />
       </aside>
 
-      {/* Page Content */}
+      
       <main
-        className="ml-64 flex-1 p-6 pt-[88px] overflow-auto"
+        className="lg:ml-64 flex-1 pt-[0px] overflow-auto"
       >
+        <AdminNavbar setIsOpen={setIsOpen} isOpen={isOpen} />
+        <div className="p-6">
         {children}
+      </div>
       </main>
     </div>
   );

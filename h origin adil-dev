@@ -1,0 +1,57 @@
+[33macbd4b9[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32madil-dev[m[33m)[m Merge remote-tracking branch 'origin/zainab-dev' into adil-dev
+[33mcd43a41[m[33m ([m[1;31morigin/adil-dev[m[33m)[m UI responsive
+[33mdc2c2ca[m[33m ([m[1;31morigin/zainab-dev[m[33m)[m Zainab : Data according responsive UI
+[33ma355578[m Hero
+[33m2714e43[m Fixed ishue
+[33mf3830f3[m fixed navigation ishue
+[33m0f0b759[m hero section images
+[33m581ef2e[m order login
+[33m1876fb5[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Uodate code somthing
+[33m0d05951[m fixed cart ishue
+[33m9474a9d[m Icon update
+[33m0f667e0[m Added verify page cross button and navbar scroll to top fix
+[33m5a0c58e[m update email ui
+[33ma696611[m manage order status
+[33m78f8d23[m admin dashbord ishue
+[33m897a68a[m Payment Getway
+[33mf06277b[m payment getway
+[33m5f6bea6[m Add collection in Collection Navbar
+[33m1fc53d0[m Save before merging zainab-dev
+[33m50c6563[m Admin panel: collections & customers completed
+[33mc598cb8[m Admin panel: collections & customers completed
+[33mc483511[m Zainab: Completed admin panel with category and inquiry feature with responsive UI and light/dark theme
+[33m5e20c1e[m Zainab: Completed admin dashboard and Product Integration In admin panel
+[33m0cdde08[m Updated login functionality
+[33me1186e8[m Updated login functionality
+[33m26d9a5b[m Anchal:login and verify-otp from fronted
+[33mdadf22a[m Zainab: Completed category related rug details, Cart & Wishlist features(frontend + backend)
+[33m8580638[m Admin Auth
+[33m2833363[m Add admin authentication with JWT, protected routes and frontend login UI
+[33m20ba294[m Zainab: implement complete cart and wishlist logic for logged-in and guest users
+[33mc48ad05[m Fixed product controller and routes
+[33mccbf2dd[m Auth
+[33m964c7b2[m Added collection CRUD and fixed product CRUD
+[33m88eb8c8[m Merge branch 'zainab-dev' of https://github.com/SkillLogic-Technologies/Ishwar-Rugs into zainab-dev
+[33m3c6b4b7[m add wishlist, cart and contact modules with email notifications
+[33m23547c2[m feat: add OTP authentication, validation and logout
+[33m3a72a1f[m Zainab: Remove .env from repo
+[33mff70b23[m resolve package.json conflict and keep dev & start scripts
+[33m8ed93b7[m Delete server/.env
+[33mbea2d3c[m Zainab: Category and Product CRUD
+[33m888f4df[m resolved index.js merge by manual combine
+[33mdf01b65[m updated .gitignore
+[33m9736c3d[m Add middleware auth
+[33ma341d82[m Fix auth middleware and profile route
+[33m2f1cd49[m Zainab: Replace old Prisma TS backend with new Express Mongo backend
+[33m52c19ce[m Backend authentication with profile and middleware completed
+[33mc5713d5[m Replaced external image URLs with locally stored optimized images
+[33m4e347dd[m Zainab: Replace image paths with Cloudinary URLs
+[33m25fbdf3[m Adil: optimized image loading and carousel performance
+[33m86cfa01[m Update server config and add client README
+[33mfc0ecf2[m Update: made changes for redeployment
+[33mc16a770[m Initial commit
+[33m52c17c0[m Integrate a database to store and manage website content efficiently
+[33m1798604[m Improve image visibility and readability for enhanced user experience
+[33m398cb3d[m Implement dark mode and improve website appearance with new design elements
+[33mf902152[m Set up website structure and core UI components for Ishwar Rugs
+[33maf05b84[m Initial commit

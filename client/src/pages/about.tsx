@@ -43,7 +43,7 @@ export default function About() {
             </div>
             <div className="relative">
               <img
-                src="https://i.postimg.cc/13hpgPM3/ChatGPT_Image_Jun_20,_2025,_11_23_59_PM.png"
+                src="https://res.cloudinary.com/dzufohihn/image/upload/v1767611004/ChatGPT_Image_Jun_20__2025__11_23_59_PM_fgi7nv.png"
                 alt="Historical carpet workshop"
                 className="rounded-lg shadow-xl w-full"
                 loading="lazy"
@@ -106,17 +106,17 @@ export default function About() {
               {
                 title: "Hand Knotting",
                 desc: "Each carpet is meticulously hand-knotted by master artisans...",
-                img: "https://i.postimg.cc/CM2bK5G8/ChatGPT_Image_Jun_30,_2025,_10_17_39_PM.png",
+                img: "https://res.cloudinary.com/dzufohihn/image/upload/v1767769565/ChatGPT_Image_Jun_30__2025__10_17_39_PM_wpjif5.png",
               },
               {
                 title: "Premium Materials",
                 desc: "We source only the finest materials - from hand-spun wool and silk...",
-                img: "https://i.postimg.cc/d3Scg10R/image.png",
+                img: "https://res.cloudinary.com/dzufohihn/image/upload/v1767769603/image_n6dsly.png",
               },
               {
                 title: "Design Innovation",
                 desc: "Our in-house design studio constantly pushes creative boundaries...",
-                img: "https://i.postimg.cc/tTR9Z8Zc/image.png",
+                img: "https://res.cloudinary.com/dzufohihn/image/upload/v1767610633/image_k7m2fk.png",
               },
             ].map((item, i) => (
               <div key={i} className="text-center">
