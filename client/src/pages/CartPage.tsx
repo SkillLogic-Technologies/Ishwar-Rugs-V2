@@ -80,7 +80,7 @@ const CartPage = () => {
   // 🔥 STRONG VALIDATION FUNCTION
   const validateForm = () => {
     const nameRegex = /^[A-Za-z\s]+$/;
-    const phoneRegex = /^[0-9]{10}$/;
+    const phoneRegex = /^[6-9]\d{9}$/;
     const pincodeRegex = /^[0-9]{6}$/;
 
     if (!nameRegex.test(shippingAddress.fullName)) {
@@ -89,7 +89,7 @@ const CartPage = () => {
     }
 
     if (!phoneRegex.test(shippingAddress.phone)) {
-      toast.error("Enter valid 10 digit phone number");
+      toast.error("Enter valid Indian phone number (starts with 6-9)");
       return false;
     }
 
@@ -192,7 +192,7 @@ const CartPage = () => {
   };
 
   const openRazorpayCheckout = (order: any, razorpayOrder: any) => {
-     console.log("RAZORPAY KEY:", import.meta.env.VITE_RAZORPAY_KEY_ID);
+    console.log("RAZORPAY KEY:", import.meta.env.VITE_RAZORPAY_KEY_ID);
     const options = {
       key: import.meta.env.VITE_RAZORPAY_KEY_ID,
       amount: razorpayOrder.amount,
@@ -322,8 +322,24 @@ const CartPage = () => {
               <input
                 key={field}
                 name={field}
+                type={field === "phone" ? "tel" : "text"}
+                maxLength={field === "phone" ? 10 : undefined}
+                value={shippingAddress[field as keyof typeof shippingAddress]} // ✅ IMPORTANT
                 placeholder={field.replace(/([A-Z])/g, " $1")}
-                onChange={handleAddressChange}
+                onChange={(e) => {
+                  if (field === "phone") {
+                    const value = e.target.value
+                      .replace(/\D/g, "")
+                      .slice(0, 10);
+
+                    setShippingAddress({
+                      ...shippingAddress,
+                      phone: value,
+                    });
+                  } else {
+                    handleAddressChange(e);
+                  }
+                }}
                 className="w-full border p-3 rounded-lg bg-background"
               />
             ),
