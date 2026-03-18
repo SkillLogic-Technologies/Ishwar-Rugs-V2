@@ -2,8 +2,8 @@ module.exports = {
   apps: [
     {
       name: "ishwar-rugs-backend",
-      script: "server/index.js",
-      cwd: "/var/www/ishwar-rugs",
+      script: "index.js",
+      cwd: "/var/www/ishwar-rugs/server",
       interpreter: "node",
       env: {
         NODE_ENV: "production",
